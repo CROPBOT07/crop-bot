@@ -1,0 +1,24 @@
+{
+  "datasets": [
+    {
+      "id": "crop_health",
+      "name": "Crop health & diseases",
+      "chunks": 3,
+      "file": "crop_health.json"
+    },
+    {
+      "id": "soil_irrigation",
+      "name": "Soil & irrigation",
+      "chunks": 3,
+      "file": "soil_irrigation.json"
+    },
+    {
+      "id": "sustainable_practices",
+      "name": "Sustainable farming",
+      "chunks": 3,
+      "file": "sustainable_practices.json"
+    }
+  ],
+  "total_chunks": 9,
+  "datasets_dir": "C:\\Ayushmaan\\datasets"
+}

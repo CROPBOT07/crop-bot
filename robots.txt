@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://crop-bot.onrender.com/sitemap.xml

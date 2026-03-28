@@ -1,0 +1,25 @@
+{
+  "schemes": [
+    {
+      "id": "pm-kisan",
+      "name": "PM-KISAN",
+      "short": "Income support of Rs. 6000/year in 3 instalments to eligible small/marginal farmer families.",
+      "eligibility": "Small/marginal farmers with land records; exclusions apply for certain categories.",
+      "how": "Apply through PM-KISAN portal / Common Service Centres; Aadhaar and bank account linked."
+    },
+    {
+      "id": "pmfby",
+      "name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "short": "Crop insurance against natural calamities, pests, and diseases.",
+      "eligibility": "Farmers notified crops in notified areas; premium subsidised.",
+      "how": "Enroll through banks / insurance intermediaries within the window announced each season."
+    },
+    {
+      "id": "soil-health-card",
+      "name": "Soil Health Card Scheme",
+      "short": "Soil testing and nutrient recommendations to improve soil health.",
+      "eligibility": "Farmers as per state sampling schedule.",
+      "how": "Contact your agriculture department / extension officer for sampling."
+    }
+  ]
+}

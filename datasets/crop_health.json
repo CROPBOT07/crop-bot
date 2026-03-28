@@ -1,0 +1,18 @@
+{
+  "id": "crop_health",
+  "name": "Crop health & diseases",
+  "chunks": [
+    {
+      "keywords": ["rust", "wheat", "fungus", "disease", "leaf"],
+      "text": "Wheat rust (yellow, brown, or stem rust) is a fungal disease. Scout fields regularly; remove volunteer wheat; use resistant varieties when available. Fungicides may be needed at early infection stages—follow local extension timings and rotate modes of action to slow resistance."
+    },
+    {
+      "keywords": ["blight", "tomato", "potato", "late", "fungicide"],
+      "text": "Late blight (Phytophthora) spreads fast in cool, wet weather. Ensure good airflow between plants; avoid overhead irrigation late in the day; destroy infected debris. Preventive fungicide programs are common for high-value crops; confirm diagnosis before spraying."
+    },
+    {
+      "keywords": ["pest", "integrated", "ipm", "monitoring"],
+      "text": "Integrated Pest Management (IPM): identify pests correctly, monitor populations (traps, scouting), use thresholds before spraying, preserve beneficial insects, and combine cultural, biological, and chemical tools when needed. Random calendar spraying is often wasteful and harms pollinators."
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "soil_irrigation",
+  "name": "Soil & irrigation",
+  "chunks": [
+    {
+      "keywords": ["soil", "fertility", "organic", "compost", "nitrogen"],
+      "text": "Building soil fertility: add compost or well-decomposed manure, minimize tillage where soil structure is fragile, rotate crops (e.g., legumes to fix nitrogen), and test soil every few years to adjust lime and nutrients precisely. Overuse of synthetic fertilizer can acidify soil or pollute water."
+    },
+    {
+      "keywords": ["irrigation", "water", "drip", "drought", "schedule"],
+      "text": "Efficient irrigation: drip or micro-sprinklers reduce evaporation loss; irrigate by crop stage (e.g., critical flowering for many crops); monitor soil moisture or use weather-based scheduling; avoid runoff by applying water in shorter intervals on sloped land."
+    },
+    {
+      "keywords": ["salinity", "salt", "drainage"],
+      "text": "Salinity issues often show as leaf burn or stunted growth. Improve drainage, avoid saline irrigation sources when possible, leach salts with extra water only where drainage allows, and use salt-tolerant crops or rootstocks in problem areas."
+    }
+  ]
+}

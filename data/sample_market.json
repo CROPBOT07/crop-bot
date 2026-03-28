@@ -1,0 +1,10 @@
+{
+  "note": "Illustrative sample prices for demo only — not live AGMARKNET data. Integrate real APIs for production.",
+  "unit": "Rs per quintal (example)",
+  "crops": [
+    { "name": "Wheat", "price": 2450, "trend": "stable", "tip": "Compare local mandi bulletin before selling." },
+    { "name": "Rice (common)", "price": 2180, "trend": "up slightly", "tip": "Grade and moisture affect price." },
+    { "name": "Mustard", "price": 5600, "trend": "stable", "tip": "Watch for moisture at sale." },
+    { "name": "Potato", "price": 920, "trend": "down", "tip": "Bulk arrivals may pressure price — check cold storage." }
+  ]
+}

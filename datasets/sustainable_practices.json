@@ -1,0 +1,18 @@
+{
+  "id": "sustainable_practices",
+  "name": "Sustainable farming",
+  "chunks": [
+    {
+      "keywords": ["cover", "crop", "erosion", "rotation"],
+      "text": "Cover crops (e.g., legumes, grasses) protect soil from erosion, add organic matter, and can suppress weeds. Combine with crop rotation to break pest cycles and reduce nutrient mining from the same niche every year."
+    },
+    {
+      "keywords": ["yield", "harvest", "post-harvest", "storage"],
+      "text": "Yield quality depends on harvest timing, gentle handling, and dry storage for grains. For vegetables, rapid cooling and clean containers reduce post-harvest losses. Track moisture content for grains before storage to prevent mold."
+    },
+    {
+      "keywords": ["season", "monsoon", "planning", "calendar"],
+      "text": "Seasonal planning: match crop choices to rainfall and temperature patterns; keep buffer for weather delays; stagger plantings for market or home use; and maintain simple records of what worked on your farm for next season."
+    }
+  ]
+}

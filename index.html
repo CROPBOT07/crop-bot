@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- ── Primary SEO ─────────────────────────────────────── -->
+    <title>Crop Bot — AI Farming Assistant | Developed by Ayushmaan Singh Pundir</title>
+    <meta name="description" content="Crop Bot is a free AI-powered farming assistant developed by Ayushmaan Singh Pundir, a 12-year-old Indian student. Get hyper-local crop advice, weather alerts, disease diagnosis from photos, market prices, and multilingual voice support — all in one app.">
+    <meta name="keywords" content="Crop Bot, AI farming assistant, Ayushmaan Singh Pundir, smart agriculture India, crop disease diagnosis, farming chatbot, weather alerts for farmers, mandi prices, multilingual farming app, student project India">
+    <meta name="author" content="Ayushmaan Singh Pundir">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://crop-bot.onrender.com/">
+
+    <!-- ── Open Graph (WhatsApp / Facebook previews) ────────── -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://crop-bot.onrender.com/">
+    <meta property="og:title" content="Crop Bot — AI Farming Assistant by Ayushmaan Singh (Age 12)">
+    <meta property="og:description" content="Free AI farming assistant with voice support, photo diagnosis, weather alerts, and market prices. Built by a 12-year-old Indian student to empower farmers.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1200&q=80">
+
+    <!-- ── Twitter Card ──────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Crop Bot — AI Farming Assistant by Ayushmaan Singh (Age 12)">
+    <meta name="twitter:description" content="Voice-powered AI assistant for Indian farmers. Crop diagnosis, weather alerts, mandi prices. Built by a 12-year-old student.">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1200&q=80">
+
+    <!-- ── JSON-LD Structured Data (Google rich results) ────── -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Crop Bot",
+      "alternateName": "CROP BOT",
+      "description": "Crop Bot is a free AI-powered farming assistant that provides hyper-local crop advice, real-time weather alerts, photo-based disease and pest diagnosis, market prices, government scheme information, and multilingual voice support in 55+ languages. Designed to empower Indian farmers with actionable, context-aware recommendations.",
+      "applicationCategory": "AgricultureApplication",
+      "operatingSystem": "Any (Web Browser)",
+      "url": "https://crop-bot.onrender.com/",
+      "inLanguage": ["en", "hi", "pa", "ta", "te", "kn", "bn", "mr", "gu", "ml"],
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "INR"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Ayushmaan Singh Pundir",
+        "description": "12-year-old student developer from India",
+        "nationality": "Indian"
+      },
+      "creator": {
+        "@type": "Person",
+        "name": "Ayushmaan Singh Pundir",
+        "description": "12-year-old Indian student who built Crop Bot to help farmers get AI-powered advice in their own language"
+      },
+      "featureList": [
+        "Voice input and text-to-speech in 55+ languages",
+        "AI-powered crop disease and pest diagnosis from photos",
+        "Hyper-local weather alerts and irrigation guidance",
+        "Mandi market price snapshot",
+        "Government scheme information (PM-KISAN, PMFBY, Soil Health Card)",
+        "Farm profile for personalised recommendations",
+        "IPM pest management quick reference",
+        "Works on any browser, any device"
+      ],
+      "keywords": "crop bot, AI farming assistant, Ayushmaan Singh, farming chatbot India, crop disease diagnosis, weather alerts farmers"
+    }
+    </script>
+
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Shifting Farming Background -->
+    <div class="bg-slideshow">
+        <div class="slide"></div>
+        <div class="slide"></div>
+        <div class="slide"></div>
+        <div class="slide"></div>
+    </div>
+    <div class="bg-overlay"></div>
+    <div class="floating-emojis">🌾 🌱 🌽 🚜 🌻</div>
+
+    <!-- Background Music - Relaxing Music -->
+    <audio id="bg-music" src="farm-music.mp3" loop preload="auto"></audio>
+    
+    <!-- Music Toggle Button -->
+    <button id="music-toggle" class="music-btn" title="Toggle Music">
+        <span class="music-icon">🔇</span>
+        <span class="music-text">Music Off</span>
+    </button>
+
+    <!-- Welcome Page -->
+    <div id="welcome-page" class="page active">
+        <div class="container">
+            <div class="welcome-content animate-in">
+                <div class="logo-container">
+                    <span class="logo-emoji bounce">🌾</span>
+                    <h1 class="title gradient-text">CROP BOT</h1>
+                    <span class="logo-emoji bounce delay-1">🌾</span>
+                </div>
+                <p class="author">
+                    Developed by <strong>Ayushmaan Singh Pundir</strong>
+                    <button id="about-btn" class="about-chip" title="About Crop Bot">👨‍💻 Age 12 · India</button>
+                </p>
+                <p class="subtitle">"Empowering Farmers with Intelligent Advice."</p>
+                <p class="description">"From soil to harvest, ask anything about your farm."</p>
+                
+                <!-- Feature highlights -->
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <span class="feature-icon">🎤</span>
+                        <span class="feature-text">Voice Input</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🤖</span>
+                        <span class="feature-text">AI Powered</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🔊</span>
+                        <span class="feature-text">Text-to-Speech</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📸</span>
+                        <span class="feature-text">Photo Diagnosis</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🌦️</span>
+                        <span class="feature-text">Weather Alerts</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">💰</span>
+                        <span class="feature-text">Market Prices</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🧾</span>
+                        <span class="feature-text">Govt Schemes</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📊</span>
+                        <span class="feature-text">Dashboard</span>
+                    </div>
+                </div>
+                
+                <button id="start-btn" class="btn-primary pulse-btn">
+                    <span>Start Asking Questions</span>
+                    <span class="btn-arrow">→</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Question Page -->
+    <div id="question-page" class="page">
+        <div class="container">
+            <div class="question-content">
+                <div class="page-header">
+                    <h2 class="page-title">🌿 Ask Your Farming Question</h2>
+                    <div class="header-actions">
+                        <button id="voice-assistant-btn" class="icon-btn voice-assistant-toggle" title="Toggle Voice Assistant Mode">
+                            <span class="va-icon">🎙️</span>
+                            <span class="va-label">Voice Mode</span>
+                        </button>
+                        <button id="history-btn" class="icon-btn" title="View History">
+                            <span>📜</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Voice Assistant Status Bar -->
+                <div id="va-status-bar" class="va-status-bar hidden">
+                    <span class="va-pulse"></span>
+                    <span id="va-status-text">Voice Assistant Active — tap 🎤 to speak</span>
+                </div>
+
+                <!-- Smart Toolbar -->
+                <div class="smart-toolbar">
+                    <button id="btn-location" class="toolbar-btn">📍 Get Weather</button>
+                    <button id="btn-profile" class="toolbar-btn">👤 My Farm</button>
+                    <span class="lang-label">Language:</span>
+                    <select id="lang-select" class="lang-select">
+                        <optgroup label="🌐 English">
+                            <option value="en-IN">English (India)</option>
+                            <option value="en-US">English (US)</option>
+                            <option value="en-GB">English (UK)</option>
+                            <option value="en-AU">English (Australia)</option>
+                        </optgroup>
+                        <optgroup label="🇮🇳 Indian Languages">
+                            <option value="hi">हिंदी — Hindi</option>
+                            <option value="pa">ਪੰਜਾਬੀ — Punjabi</option>
+                            <option value="ta">தமிழ் — Tamil</option>
+                            <option value="te">తెలుగు — Telugu</option>
+                            <option value="kn">ಕನ್ನಡ — Kannada</option>
+                            <option value="bn">বাংলা — Bengali</option>
+                            <option value="mr">मराठी — Marathi</option>
+                            <option value="gu">ગુજરાતી — Gujarati</option>
+                            <option value="ml">മലയാളം — Malayalam</option>
+                            <option value="ur">اردو — Urdu</option>
+                            <option value="or">ଓଡ଼ିଆ — Odia</option>
+                            <option value="as">অসমীয়া — Assamese</option>
+                            <option value="ne">नेपाली — Nepali</option>
+                            <option value="si">සිංහල — Sinhala</option>
+                        </optgroup>
+                        <optgroup label="🌏 East &amp; Southeast Asian">
+                            <option value="zh-CN">中文简体 — Chinese (Simplified)</option>
+                            <option value="zh-TW">中文繁體 — Chinese (Traditional)</option>
+                            <option value="ja">日本語 — Japanese</option>
+                            <option value="ko">한국어 — Korean</option>
+                            <option value="id">Bahasa Indonesia — Indonesian</option>
+                            <option value="ms">Bahasa Melayu — Malay</option>
+                            <option value="th">ภาษาไทย — Thai</option>
+                            <option value="vi">Tiếng Việt — Vietnamese</option>
+                            <option value="fil">Filipino — Filipino</option>
+                            <option value="my">မြန်မာ — Burmese</option>
+                            <option value="km">ខ្មែរ — Khmer</option>
+                        </optgroup>
+                        <optgroup label="🌍 Middle East &amp; Central Asia">
+                            <option value="ar">العربية — Arabic</option>
+                            <option value="fa">فارسی — Persian (Farsi)</option>
+                            <option value="he">עברית — Hebrew</option>
+                            <option value="tr">Türkçe — Turkish</option>
+                            <option value="az">Azərbaycan — Azerbaijani</option>
+                            <option value="kk">Қазақша — Kazakh</option>
+                            <option value="uz">O'zbek — Uzbek</option>
+                        </optgroup>
+                        <optgroup label="🌍 African Languages">
+                            <option value="sw">Kiswahili — Swahili</option>
+                            <option value="ha">Hausa — Hausa</option>
+                            <option value="am">አማርኛ — Amharic</option>
+                            <option value="yo">Yorùbá — Yoruba</option>
+                            <option value="ig">Igbo — Igbo</option>
+                            <option value="af">Afrikaans — Afrikaans</option>
+                            <option value="zu">isiZulu — Zulu</option>
+                            <option value="so">Soomaali — Somali</option>
+                        </optgroup>
+                        <optgroup label="🌍 European">
+                            <option value="es">Español — Spanish</option>
+                            <option value="fr">Français — French</option>
+                            <option value="de">Deutsch — German</option>
+                            <option value="pt-BR">Português (Brasil) — Portuguese</option>
+                            <option value="pt-PT">Português (Portugal) — Portuguese</option>
+                            <option value="it">Italiano — Italian</option>
+                            <option value="ru">Русский — Russian</option>
+                            <option value="pl">Polski — Polish</option>
+                            <option value="nl">Nederlands — Dutch</option>
+                            <option value="el">Ελληνικά — Greek</option>
+                            <option value="sv">Svenska — Swedish</option>
+                            <option value="no">Norsk — Norwegian</option>
+                            <option value="da">Dansk — Danish</option>
+                            <option value="fi">Suomi — Finnish</option>
+                            <option value="ro">Română — Romanian</option>
+                            <option value="uk">Українська — Ukrainian</option>
+                            <option value="cs">Čeština — Czech</option>
+                            <option value="sk">Slovenčina — Slovak</option>
+                            <option value="hu">Magyar — Hungarian</option>
+                            <option value="bg">Български — Bulgarian</option>
+                            <option value="hr">Hrvatski — Croatian</option>
+                            <option value="sr">Српски — Serbian</option>
+                            <option value="ca">Català — Catalan</option>
+                            <option value="lt">Lietuvių — Lithuanian</option>
+                            <option value="lv">Latviešu — Latvian</option>
+                            <option value="et">Eesti — Estonian</option>
+                        </optgroup>
+                        <optgroup label="🌎 Americas">
+                            <option value="es-MX">Español (México) — Spanish Mexico</option>
+                            <option value="es-AR">Español (Argentina) — Spanish Argentina</option>
+                            <option value="qu">Quechua — Quechua</option>
+                        </optgroup>
+                    </select>
+                    <button id="btn-dashboard" class="toolbar-btn">📊 Dashboard</button>
+                </div>
+
+                <!-- Weather Panel (shown after location is fetched) -->
+                <div id="weather-panel" class="weather-panel hidden">
+                    <p id="weather-line" class="weather-line">📡 Loading weather…</p>
+                    <ul id="alerts-list" class="alerts-list"></ul>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <p class="quick-label">Quick Questions:</p>
+                    <div class="quick-btns">
+                        <button class="quick-btn" data-question="How to improve soil fertility?">🌱 Soil Tips</button>
+                        <button class="quick-btn" data-question="Best crops for this season?">🌾 Seasonal Crops</button>
+                        <button class="quick-btn" data-question="How to protect crops from pests?">🐛 Pest Control</button>
+                        <button class="quick-btn" data-question="Water management tips for farming?">💧 Irrigation</button>
+                        <button class="quick-btn" data-question="How to increase crop yield?">📈 Yield Tips</button>
+                    </div>
+                </div>
+                
+                <div class="input-container">
+                    <div class="input-wrapper">
+                        <textarea 
+                            id="question-input" 
+                            placeholder="Type or speak your question... (e.g., How do I grow tomatoes?)"
+                            rows="3"
+                        ></textarea>
+                        <button id="voice-btn" class="voice-btn" title="Voice Input">
+                            <span class="voice-icon">🎤</span>
+                        </button>
+                    </div>
+                    <!-- Crop Photo Upload -->
+                    <div class="photo-row">
+                        <div class="photo-row-header">
+                            <span class="photo-row-title">📸 Crop Photo Diagnosis</span>
+                            <span class="photo-row-badge">🤖 AI Powered</span>
+                        </div>
+                        <p class="photo-subtitle">Get instant diagnosis of diseases 🍂, pests 🪲, and nutrient deficiencies 🌿</p>
+
+                        <!-- Hidden file inputs -->
+                        <input type="file" id="crop-image-input" class="file-input-hidden" accept="image/*">
+                        <input type="file" id="crop-image-camera" class="file-input-hidden" accept="image/*" capture="environment">
+
+                        <!-- Two-button choice -->
+                        <div class="photo-options" id="photo-options">
+                            <button class="photo-option-btn" id="btn-gallery">
+                                <span class="po-icon">🖼️</span>
+                                <span class="po-label">Upload Photo</span>
+                                <span class="po-sub">From gallery / files</span>
+                            </button>
+                            <button class="photo-option-btn" id="btn-camera">
+                                <span class="po-icon">📷</span>
+                                <span class="po-label">Take Photo</span>
+                                <span class="po-sub">Use device camera</span>
+                            </button>
+                        </div>
+
+                        <!-- Preview card (hidden until photo selected) -->
+                        <div id="photo-preview-card" class="photo-preview-card hidden">
+                            <img id="image-preview" class="image-preview" alt="Crop preview">
+                            <div class="photo-preview-info">
+                                <span class="photo-ready-badge">✅ Photo ready — AI will analyse it</span>
+                                <p class="photo-ready-hint">🔬 Add details in your question for a more accurate diagnosis (e.g. "leaves turning yellow at edges")</p>
+                                <button id="clear-image" class="photo-clear-btn">🗑️ Remove &amp; choose again</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button id="submit-btn" class="btn-primary">
+                            <span>🚀 Get Answer</span>
+                        </button>
+                        <button id="back-btn" class="btn-secondary">
+                            <span>← Back</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="answer-container" class="answer-container hidden">
+                    <div class="answer-header">
+                        <h3>🤖 AI Answer:</h3>
+                        <div class="answer-actions">
+                            <button id="speak-btn" class="action-btn" title="Read Aloud">
+                                <span>🔊</span>
+                            </button>
+                            <button id="copy-btn" class="action-btn" title="Copy Answer">
+                                <span>📋</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="answer-text" class="answer-text"></div>
+                    <div id="provider-badge" class="provider-badge"></div>
+                </div>
+                
+                <div id="loading" class="loading hidden">
+                    <div class="loader">
+                        <div class="plant-grow">
+                            <span>🌱</span>
+                        </div>
+                    </div>
+                    <p class="loading-text">Growing your answer...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- History Modal -->
+    <div id="history-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📜 Question History</h3>
+                <button id="close-modal" class="close-btn">×</button>
+            </div>
+            <div id="history-list" class="history-list">
+                <p class="empty-history">No questions asked yet. Start exploring!</p>
+            </div>
+            <button id="clear-history" class="btn-danger">🗑️ Clear History</button>
+        </div>
+    </div>
+    
+    <!-- Farm Profile Modal -->
+    <div id="profile-modal" class="modal hidden">
+        <div class="modal-content profile-modal-content">
+            <div class="modal-header">
+                <h3>👤 My Farm Profile</h3>
+                <button id="close-profile" class="close-btn">×</button>
+            </div>
+            <p class="profile-help">Your profile tailors every answer to your specific farm conditions.</p>
+            <div class="profile-fields">
+                <label>Main Crop
+                    <input id="profile-crop" type="text" placeholder="e.g. Wheat, Rice, Cotton, Tomato">
+                </label>
+                <label>Soil Type
+                    <input id="profile-soil" type="text" placeholder="e.g. Clay, Sandy, Loamy, Black cotton">
+                </label>
+                <label>Land Size
+                    <input id="profile-land" type="text" placeholder="e.g. 2 acres, 5 bigha, 1 hectare">
+                </label>
+                <label>Irrigation Method
+                    <input id="profile-irrigation" type="text" placeholder="e.g. Drip, Flood, Sprinkler, Rain-fed">
+                </label>
+                <label>District / Region
+                    <input id="profile-district" type="text" placeholder="e.g. Ludhiana, Nashik, Guntur">
+                </label>
+            </div>
+            <button id="save-profile" class="btn-primary profile-save">💾 Save Profile</button>
+        </div>
+    </div>
+
+    <!-- Dashboard Modal -->
+    <div id="dashboard-modal" class="modal hidden">
+        <div class="modal-content dashboard-modal-content">
+            <div class="modal-header">
+                <h3>📊 Farm Dashboard</h3>
+                <button id="close-dashboard" class="close-btn">×</button>
+            </div>
+            <div id="dashboard-body" class="dashboard-body">
+                <!-- Weather & Alerts -->
+                <div class="dash-section">
+                    <h4 class="dash-section-title">🌦️ Weather Alerts</h4>
+                    <div id="dash-alerts" class="dash-alerts-list">
+                        <p class="dash-empty">Tap "📍 Get Weather" on the main screen first.</p>
+                    </div>
+                </div>
+                <!-- Proactive Tips -->
+                <div class="dash-section">
+                    <h4 class="dash-section-title">💡 Crop Alerts &amp; Tips</h4>
+                    <div id="dash-tips" class="dash-tips-list">
+                        <p class="dash-empty">Set your crop in "👤 My Farm" profile to see personalised tips.</p>
+                    </div>
+                </div>
+                <!-- Market Snapshot -->
+                <div class="dash-section">
+                    <h4 class="dash-section-title">💰 Market Snapshot <span class="demo-tag">demo prices</span></h4>
+                    <div id="dash-market" class="dash-market-grid">
+                        <!-- filled by JS -->
+                    </div>
+                </div>
+                <!-- Government Schemes -->
+                <div class="dash-section">
+                    <h4 class="dash-section-title">🧾 Key Government Schemes</h4>
+                    <div class="dash-schemes">
+                        <div class="scheme-card">
+                            <strong>PM-KISAN</strong>
+                            <p>₹6,000/year income support in 3 instalments for eligible farmers.</p>
+                        </div>
+                        <div class="scheme-card">
+                            <strong>PMFBY</strong>
+                            <p>Crop insurance against natural calamities, pests, and diseases. Subsidised premium.</p>
+                        </div>
+                        <div class="scheme-card">
+                            <strong>Soil Health Card</strong>
+                            <p>Free soil testing + nutrient recommendations from your agriculture department.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- IPM Quick Reference -->
+                <div class="dash-section">
+                    <h4 class="dash-section-title">🐛 IPM Quick Reference</h4>
+                    <div class="ipm-grid">
+                        <div class="ipm-card">
+                            <span class="ipm-icon">🍂</span>
+                            <strong>Yellow/Brown Leaves</strong>
+                            <p>Could be nutrient deficiency, fungal disease, or water stress. Check pH first.</p>
+                        </div>
+                        <div class="ipm-card">
+                            <span class="ipm-icon">🪲</span>
+                            <strong>Stem Borer</strong>
+                            <p>Look for dead hearts in paddy. Use pheromone traps + neem-based sprays early.</p>
+                        </div>
+                        <div class="ipm-card">
+                            <span class="ipm-icon">🦟</span>
+                            <strong>Aphids / Whitefly</strong>
+                            <p>Yellow sticky traps + neem oil 2ml/L spray. Avoid excess nitrogen fertiliser.</p>
+                        </div>
+                        <div class="ipm-card">
+                            <span class="ipm-icon">🍄</span>
+                            <strong>Fungal Disease</strong>
+                            <p>Improve airflow + reduce overhead irrigation. Apply copper-based fungicide early.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button id="refresh-dashboard" class="btn-primary" style="margin-top:12px">🔄 Refresh Data</button>
+        </div>
+    </div>
+
+    <!-- About Modal -->
+    <div id="about-modal" class="modal hidden">
+        <div class="modal-content about-modal-content">
+            <div class="modal-header">
+                <h3>🌾 About Crop Bot</h3>
+                <button id="close-about" class="close-btn">×</button>
+            </div>
+
+            <div class="about-hero">
+                <div class="about-avatar">👨‍💻</div>
+                <div class="about-hero-text">
+                    <h2 class="about-name">Ayushmaan Singh Pundir</h2>
+                    <p class="about-tagline">🇮🇳 12-Year-Old Student Developer · India</p>
+                </div>
+            </div>
+
+            <div class="about-quote">
+                "I built Crop Bot because I wanted farmers — especially in villages — to get the same quality of advice that experts give, in their own language, for free."
+            </div>
+
+            <div class="about-stats">
+                <div class="about-stat">
+                    <span class="about-stat-num">55+</span>
+                    <span class="about-stat-label">Languages</span>
+                </div>
+                <div class="about-stat">
+                    <span class="about-stat-num">🤖</span>
+                    <span class="about-stat-label">AI Powered</span>
+                </div>
+                <div class="about-stat">
+                    <span class="about-stat-num">📸</span>
+                    <span class="about-stat-label">Photo Diagnosis</span>
+                </div>
+                <div class="about-stat">
+                    <span class="about-stat-num">100%</span>
+                    <span class="about-stat-label">Free</span>
+                </div>
+            </div>
+
+            <div class="about-section">
+                <h4>📖 What is Crop Bot?</h4>
+                <p>Crop Bot is a free, AI-powered farming assistant designed to empower farmers across India and the world. It gives hyper-local, context-aware advice based on your crop, soil, location, weather, and even photos of your plants.</p>
+            </div>
+
+            <div class="about-section">
+                <h4>✨ Key Features</h4>
+                <ul class="about-features">
+                    <li>🎤 Voice input &amp; text-to-speech in 55+ languages</li>
+                    <li>📸 AI photo diagnosis for diseases, pests &amp; deficiencies</li>
+                    <li>🌦️ Hyper-local weather alerts &amp; irrigation timing</li>
+                    <li>💰 Mandi market price snapshot</li>
+                    <li>🧾 Government scheme guidance (PM-KISAN, PMFBY)</li>
+                    <li>🐛 IPM pest management quick reference</li>
+                    <li>👤 Personalised farm profile for tailored advice</li>
+                </ul>
+            </div>
+
+            <div class="about-section">
+                <h4>🏆 Built By a Student, For Farmers</h4>
+                <p>Crop Bot was designed and coded entirely by <strong>Ayushmaan Singh Pundir</strong>, a 12-year-old student from India, with a mission to bridge the technology gap in agriculture and make expert farming advice accessible to every farmer — in their own language, on any device, for free.</p>
+            </div>
+
+            <div class="about-footer">
+                🌾 Crop Bot · Developed by Ayushmaan Singh Pundir · Age 12 · India · 2024
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden">
+        <span id="toast-message"></span>
+    </div>
+</body>
+<script src="script.js"></script>
+</html>

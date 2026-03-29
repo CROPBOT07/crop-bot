@@ -1,34 +1,3 @@
-
-import kagglehub
-
-# Download latest version
-path = kagglehub.dataset_download("midouazerty/work-for-parmavir")
-
-print("Path to dataset files:", path)
-import kagglehub
-
-# Download latest version
-path = kagglehub.dataset_download("tarundalal/dangerous-insects-dataset")
-
-print("Path to dataset files:", path)
-import kagglehub
-
-# Download latest version
-path = kagglehub.dataset_download("atharvasoundankar/smart-farming-sensor-data-for-yield-prediction")
-
-print("Path to dataset files:", path)
-import kagglehub
-
-# Download latest version
-path = kagglehub.dataset_download("japondo/corn-farming-data")
-
-print("Path to dataset files:", path)
-import kagglehub
-
-# Download latest version
-path = kagglehub.dataset_download("bhadramohit/agriculture-and-farming-dataset")
-
-print("Path to dataset files:", path)
 #!/usr/bin/env python3
 """
 Validate farming JSON datasets and write a small index (metadata only).
@@ -56,7 +25,7 @@ def main() -> int:
 
     datasets = load_all_datasets()
     if not datasets:
-        print(f"⚠️  No valid datasets found in {DATASETS_DIR}")
+        print(f"[warn] No valid datasets found in {DATASETS_DIR}")
         print("   Each file should be JSON with: id, name, chunks[].text, chunks[].keywords")
         return 1
 
@@ -70,14 +39,14 @@ def main() -> int:
         "datasets_dir": DATASETS_DIR,
     }
     with open(index_path, "w", encoding="utf-8") as f:
-        json.dump(payload, f, indent=2)
+        json.dump(payload, f, indent=2, ensure_ascii=False)
 
-    print("[OK] Dataset training index (validation) complete\n")
+    print("\n[OK] Dataset training index (validation) complete\n")
     print(f"   Folder: {DATASETS_DIR}")
-    print(f"   Datasets: {len(meta)}  |  Total chunks: {total_chunks}")
+    print(f"   Datasets: {len(meta):>2}  |  Total chunks: {total_chunks:>3}")
     print(f"   Written: {index_path}\n")
     for m in meta:
-        print(f"   - {m['id']}: {m['name']} ({m['chunks']} chunks) [{m['file']}]")
+        print(f"   - {m['id']:<30} {m['name']:<40} ({m['chunks']:>2} chunks) {m['file']}")
     return 0
 
 

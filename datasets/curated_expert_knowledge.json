@@ -1,0 +1,278 @@
+{
+  "id": "curated_expert_knowledge",
+  "name": "Expert Farming Knowledge (Curated)",
+  "chunks": [
+    {
+      "text": "Rice blast (Magnaporthe oryzae) causes diamond-shaped lesions on leaves and stem rot. It spreads rapidly in humid conditions (>90% RH) and temperatures 24–28°C. Management: use resistant varieties (IR-64, Swarna), apply Tricyclazole 75 WP at 0.6 g/L or Isoprothiolane 40 EC at 1.5 mL/L at first sign.",
+      "keywords": [
+        "rice",
+        "blast",
+        "magnaporthe",
+        "lesion",
+        "tricyclazole",
+        "disease",
+        "fungal",
+        "humidity"
+      ]
+    },
+    {
+      "text": "Powdery mildew on wheat and barley shows as white powdery patches on leaves and stems. Favoured by cool temperatures 15–22°C and moderate humidity. Control: spray Propiconazole 25 EC at 0.1% or Tebuconazole 250 EW at 1 mL/L. Crop rotation and removing infected debris reduces inoculum.",
+      "keywords": [
+        "wheat",
+        "barley",
+        "powdery",
+        "mildew",
+        "propiconazole",
+        "fungus",
+        "disease",
+        "spore"
+      ]
+    },
+    {
+      "text": "Cotton bollworm (Helicoverpa armigera) is India's most destructive pest, damaging flowers and bolls. Economic threshold: 1 larva per plant or 5–8% damaged squares. Management: pheromone traps (1/ha), spray Spinosad 45 SC 0.3 mL/L or Emamectin 5 SG 0.4 g/L. Bt cotton varieties reduce infestation by 70–80%.",
+      "keywords": [
+        "cotton",
+        "bollworm",
+        "helicoverpa",
+        "pest",
+        "spinosad",
+        "bt",
+        "pheromone",
+        "boll"
+      ]
+    },
+    {
+      "text": "Tomato early blight (Alternaria solani) causes dark concentric ring spots on lower leaves. Spreads in warm (24–29°C), wet weather. Apply Mancozeb 75 WP at 2.5 g/L or Chlorothalonil 75 WP at 2 g/L every 7–10 days. Remove infected leaves promptly.",
+      "keywords": [
+        "tomato",
+        "blight",
+        "alternaria",
+        "mancozeb",
+        "fungal",
+        "disease",
+        "leaf",
+        "spot"
+      ]
+    },
+    {
+      "text": "Black cotton soil (Vertisol) swells when wet and cracks when dry. It retains moisture well, ideal for cotton, soybean, sorghum. pH typically 7.5–8.5. Needs gypsum application (100–200 kg/ha) to correct alkalinity. Avoid waterlogging; ridge-and-furrow planting improves drainage.",
+      "keywords": [
+        "black",
+        "cotton",
+        "vertisol",
+        "soil",
+        "gypsum",
+        "alkaline",
+        "drainage",
+        "crack"
+      ]
+    },
+    {
+      "text": "Red laterite soils are acidic (pH 5–6.5), low in nitrogen and phosphorus but rich in iron. Found in peninsular India (Tamil Nadu, Kerala, Karnataka). Suitable for cashew, groundnut, mango, tapioca. Apply lime (500–1000 kg/ha) to raise pH, and compost to improve fertility.",
+      "keywords": [
+        "red",
+        "laterite",
+        "acidic",
+        "soil",
+        "lime",
+        "groundnut",
+        "cashew",
+        "iron"
+      ]
+    },
+    {
+      "text": "Urea (46% N) is the most widely used nitrogen fertiliser. Apply in split doses: 1/3 at sowing, 1/3 at tillering, 1/3 at panicle initiation for rice. Use neem-coated urea to reduce volatilisation loss by 10–15%. Excess urea causes lodging and increases susceptibility to blast.",
+      "keywords": [
+        "urea",
+        "nitrogen",
+        "fertilizer",
+        "neem",
+        "coated",
+        "split",
+        "dose",
+        "volatilisation"
+      ]
+    },
+    {
+      "text": "Soil organic carbon (SOC) above 0.5% improves water retention, structure, and microbial activity. Increase SOC by incorporating green manure (Dhaincha, Sunhemp), crop residues, farmyard manure (5–10 t/ha/year), and adopting zero-tillage. Target SOC of 0.75–1.0% for most Indian agricultural soils.",
+      "keywords": [
+        "organic",
+        "carbon",
+        "soc",
+        "compost",
+        "manure",
+        "microbial",
+        "soil",
+        "health"
+      ]
+    },
+    {
+      "text": "Drip irrigation reduces water use by 30–50% compared to flood irrigation. Ideal for sugarcane, vegetables, orchards. Operates at low pressure (1–2 bar) delivering water directly to root zone. Fertigation through drip increases fertiliser efficiency by 25–30%. Government subsidy available under PM-Krishi Sinchai Yojana.",
+      "keywords": [
+        "drip",
+        "irrigation",
+        "water",
+        "fertigation",
+        "sugarcane",
+        "efficiency",
+        "subsidy"
+      ]
+    },
+    {
+      "text": "Sprinkler irrigation is suitable for wheat, mustard, groundnut, and vegetables on undulating land. Water saving of 20–35% vs flood. Install during early morning or evening to minimise evaporation. Avoid during high winds (>15 km/h) for uniform distribution.",
+      "keywords": [
+        "sprinkler",
+        "irrigation",
+        "wheat",
+        "mustard",
+        "groundnut",
+        "water",
+        "saving"
+      ]
+    },
+    {
+      "text": "Pradhan Mantri Fasal Bima Yojana (PMFBY) provides crop insurance at 2% premium for kharif and 1.5% for rabi crops. Claims cover losses from drought, flood, pest, and post-harvest damage. Enrol through Common Service Centres (CSC) or bank branches before the notified date. Aadhaar, bank passbook, and land records required.",
+      "keywords": [
+        "pmfby",
+        "fasal",
+        "bima",
+        "insurance",
+        "premium",
+        "kharif",
+        "rabi",
+        "scheme",
+        "government"
+      ]
+    },
+    {
+      "text": "e-NAM (National Agriculture Market) is an online trading platform linking 1000+ APMCs. Farmers can sell directly to buyers across India, getting better price discovery. Register at enam.gov.in with Aadhaar and bank details. Charges are lower than traditional mandis.",
+      "keywords": [
+        "enam",
+        "mandi",
+        "price",
+        "market",
+        "apmc",
+        "online",
+        "trade",
+        "farmer"
+      ]
+    },
+    {
+      "text": "Minimum Support Price (MSP) for major kharif 2024 crops: Paddy ₹2300/quintal, Maize ₹2090/quintal, Cotton (medium staple) ₹7121/quintal, Groundnut ₹6783/quintal, Soybean ₹4892/quintal. Procurement through FCI and state agencies at notified purchase centres.",
+      "keywords": [
+        "msp",
+        "minimum",
+        "support",
+        "price",
+        "paddy",
+        "maize",
+        "cotton",
+        "groundnut",
+        "kharif"
+      ]
+    },
+    {
+      "text": "Integrated Pest Management (IPM) combines biological, cultural, and chemical methods. Steps: (1) regular scouting to reach economic threshold, (2) use bioagents (Trichogramma cards for stem borer), (3) sticky traps for whitefly and thrips, (4) chemical sprays only as last resort. Reduces pesticide cost by 40–60%.",
+      "keywords": [
+        "ipm",
+        "integrated",
+        "pest",
+        "management",
+        "trichogramma",
+        "bioagent",
+        "scouting"
+      ]
+    },
+    {
+      "text": "Yellow sticky traps (25/ha) monitor and reduce whitefly, aphid, and leafhopper populations. Blue traps attract thrips. Pheromone traps (Helilure) for bollworm monitoring. Replace traps every 15 days. Record counts to decide spray timing.",
+      "keywords": [
+        "trap",
+        "sticky",
+        "yellow",
+        "whitefly",
+        "aphid",
+        "pheromone",
+        "monitor",
+        "pest"
+      ]
+    },
+    {
+      "text": "Kharif season (June–October): sow after first monsoon rain (100–150 mm). Major crops: rice, maize, sorghum, cotton, soybean, groundnut, sugarcane. Land preparation: plough 2–3 times; puddling for transplanted rice. Harvest October–November. Sell before peak arrivals to get better prices.",
+      "keywords": [
+        "kharif",
+        "monsoon",
+        "sowing",
+        "rice",
+        "maize",
+        "sorghum",
+        "season",
+        "harvest"
+      ]
+    },
+    {
+      "text": "Rabi season (October–March): sow after monsoon retreat when soil temperature falls below 25°C. Major crops: wheat, mustard, chickpea, lentil, potato, sunflower. Irrigation crucial: wheat needs 4–5 irrigations; mustard 1–2. Harvest March–April. Store in hermetic bags to avoid insect damage.",
+      "keywords": [
+        "rabi",
+        "wheat",
+        "mustard",
+        "chickpea",
+        "winter",
+        "season",
+        "irrigation",
+        "harvest"
+      ]
+    },
+    {
+      "text": "Hybrid seeds give 20–30% higher yield than open-pollinated varieties but must be repurchased each year. High-yielding wheat varieties for India: HD-3086 (north), GW-496 (Gujarat), PBW-725 (Punjab). For rice: Swarna, MTU-7029 (Samba Mahsuri), Pusa Basmati 1121 (export).",
+      "keywords": [
+        "hybrid",
+        "seed",
+        "variety",
+        "wheat",
+        "rice",
+        "yield",
+        "hd3086",
+        "swarna",
+        "basmati"
+      ]
+    },
+    {
+      "text": "Seed treatment before sowing protects against soil-borne pathogens and early-season pests. Treat with Carbendazim 2 g/kg + Thiram 3 g/kg for fungal protection. For nematodes, use Carbofuran 3G in seed furrow at 1 kg/ha. Bio-seed treatment with Trichoderma viride 4 g/kg improves germination and root health.",
+      "keywords": [
+        "seed",
+        "treatment",
+        "carbendazim",
+        "thiram",
+        "trichoderma",
+        "nematode",
+        "germination"
+      ]
+    },
+    {
+      "text": "Grain moisture at harvest: wheat 12–14%, rice 14–17%, maize 18–22%. Dry to safe storage moisture (wheat <12%, rice <14%) to prevent mould. Use moisture meters before bagging. Store in HDPE woven bags or hermetic bags. Fumigate with Aluminium Phosphide 3 g/tonne for long-term storage.",
+      "keywords": [
+        "moisture",
+        "storage",
+        "grain",
+        "wheat",
+        "rice",
+        "maize",
+        "hermetic",
+        "fumigation"
+      ]
+    },
+    {
+      "text": "Cold storage extends shelf life of potatoes (6–9 months at 4°C), apples (4–6 months at 1–4°C), and grapes (2–3 months at 0°C). Pre-cooling within 6 hours of harvest reduces field heat. Government subsidises cold chain under Pradhan Mantri Kisan Sampada Yojana.",
+      "keywords": [
+        "cold",
+        "storage",
+        "potato",
+        "apple",
+        "grape",
+        "shelf",
+        "life",
+        "postharvest"
+      ]
+    }
+  ]
+}

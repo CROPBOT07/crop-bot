@@ -190,7 +190,7 @@ Then run `python train_datasets.py` to rebuild index.
 
 ## Credits
 
-- **Crop Bot** by Ayushmaan Singh Pundir (Age 12, India)
+- **Crop Bot** by Ayushmaan Singh Pundir (Age 12 student at amity international school sector 1 vasundhara, India)
 - **Datasets**: HuggingFace, Kaggle community contributors
 - **RAG System**: Custom keyword-based retrieval with semantic scoring
 

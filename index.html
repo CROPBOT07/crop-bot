@@ -67,6 +67,15 @@
     }
     </script>
 
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4a7c2a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Crop Bot">
+    <link rel="apple-touch-icon" href="/icon.svg">
+
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -153,19 +162,44 @@
     <!-- Question Page -->
     <div id="question-page" class="page">
         <div class="container">
-            <div class="question-content">
-                <div class="page-header">
-                    <h2 class="page-title">🌿 Ask Your Farming Question</h2>
-                    <div class="header-actions">
-                        <button id="voice-assistant-btn" class="icon-btn voice-assistant-toggle" title="Toggle Voice Assistant Mode">
-                            <span class="va-icon">🎙️</span>
-                            <span class="va-label">Voice Mode</span>
-                        </button>
-                        <button id="history-btn" class="icon-btn" title="View History">
-                            <span>📜</span>
-                        </button>
+            <div class="app-layout">
+                <aside class="sidebar">
+                    <div class="sidebar-brand">
+                        <h3>Crop Bot</h3>
+                        <p>AI Farming Assistant</p>
                     </div>
-                </div>
+                    <button id="home-btn" class="sidebar-btn">🏠 Home</button>
+                    <button id="new-chat" class="sidebar-btn active">➕ New Chat</button>
+                    <button id="history-btn" class="sidebar-btn">📜 History</button>
+
+                    <div class="sidebar-section-title">Features</div>
+                    <button id="btn-location-sidebar" class="sidebar-btn">🌦️ Weather</button>
+                    <button id="btn-camera-sidebar" class="sidebar-btn">📷 Photo Diagnosis</button>
+                    <button id="btn-profile-sidebar" class="sidebar-btn">👤 Farm Profile</button>
+                    <button id="btn-dashboard-sidebar" class="sidebar-btn">📊 Dashboard</button>
+                    <button id="btn-calendar-sidebar" class="sidebar-btn">📅 Crop Calendar</button>
+                    <button id="about-btn-sidebar" class="sidebar-btn">ℹ️ About</button>
+
+                    <div class="sidebar-section-title">Modes</div>
+                    <div class="mode-pill active" data-mode="farming">🌱 Farming</div>
+                    <div class="mode-pill" data-mode="market">💰 Market</div>
+                    <div class="mode-pill" data-mode="diagnosis">🔬 Diagnosis</div>
+                </aside>
+
+                <main class="main-panel">
+                    <div class="question-content">
+                        <div class="page-header">
+                            <h2 class="page-title">🌿 Ask Your Farming Question</h2>
+                            <div class="header-actions">
+                                <button id="voice-assistant-btn" class="icon-btn voice-assistant-toggle" title="Toggle Voice Assistant Mode">
+                                    <span class="va-icon">🎙️</span>
+                                    <span class="va-label">Voice Mode</span>
+                                </button>
+                                <button id="history-btn" class="icon-btn" title="View History">
+                                    <span>📜</span>
+                                </button>
+                            </div>
+                        </div>
                 <!-- Voice Assistant Status Bar -->
                 <div id="va-status-bar" class="va-status-bar hidden">
                     <span class="va-pulse"></span>
@@ -176,6 +210,10 @@
                 <div class="smart-toolbar">
                     <button id="btn-location" class="toolbar-btn">📍 Get Weather</button>
                     <button id="btn-profile" class="toolbar-btn">👤 My Farm</button>
+                    <span class="lang-label">Dataset:</span>
+                    <select id="dataset-select" class="lang-select">
+                        <option value="all">All datasets (default)</option>
+                    </select>
                     <span class="lang-label">Language:</span>
                     <select id="lang-select" class="lang-select">
                         <optgroup label="🌐 English">
@@ -343,8 +381,13 @@
                             <span>← Back</span>
                         </button>
                     </div>
+                    <div id="quota-bar" class="quota-bar hidden">
+                        <span id="quota-text">5 free questions remaining today</span>
+                    </div>
                 </div>
-                
+
+                <div id="provider-status" class="provider-status">Provider status: loading…</div>
+
                 <div id="answer-container" class="answer-container hidden">
                     <div class="answer-header">
                         <h3>🤖 AI Answer:</h3>
@@ -360,7 +403,13 @@
                     <div id="answer-text" class="answer-text"></div>
                     <div id="provider-badge" class="provider-badge"></div>
                 </div>
-                
+
+                <div id="feedback-widget" class="feedback-widget">
+                    <h4>📝 Feedback</h4>
+                    <textarea id="feedback-input" placeholder="Tell us how the answer can improve..." rows="2"></textarea>
+                    <button id="feedback-submit" class="btn-secondary">Submit feedback</button>
+                </div>
+
                 <div id="loading" class="loading hidden">
                     <div class="loader">
                         <div class="plant-grow">
@@ -379,6 +428,10 @@
             <div class="modal-header">
                 <h3>📜 Question History</h3>
                 <button id="close-modal" class="close-btn">×</button>
+            </div>
+            <div class="history-filter">
+                <input id="history-filter-input" type="text" placeholder="Filter history..." />
+                <button id="history-clear-filter" class="icon-btn" title="Clear filter">✖</button>
             </div>
             <div id="history-list" class="history-list">
                 <p class="empty-history">No questions asked yet. Start exploring!</p>
@@ -560,6 +613,55 @@
                 🌾 Crop Bot · Developed by Ayushmaan Singh Pundir · Age 12 · India · 2024
             </div>
         </div>
+    </div>
+
+    <!-- Crop Calendar Modal -->
+    <div id="calendar-modal" class="modal hidden">
+        <div class="modal-content calendar-modal-content">
+            <div class="modal-header">
+                <h3>📅 Crop Calendar</h3>
+                <button id="close-calendar" class="close-btn">×</button>
+            </div>
+            <div id="calendar-crop-info" class="calendar-crop-info"></div>
+            <div id="calendar-body" class="calendar-body">
+                <div class="calendar-prompt">
+                    <p>Set your crop in <strong>👤 My Farm</strong> profile, then tap <strong>Generate</strong>.</p>
+                    <div class="calendar-form">
+                        <input id="cal-crop-input" type="text" placeholder="e.g. Wheat, Rice, Tomato" class="cal-input">
+                        <input id="cal-district-input" type="text" placeholder="District (optional)" class="cal-input">
+                        <button id="cal-generate-btn" class="btn-primary">🌱 Generate Calendar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Paywall / Quota Modal -->
+    <div id="paywall-modal" class="modal hidden">
+        <div class="modal-content paywall-modal-content">
+            <div class="paywall-icon">🌾</div>
+            <h3 class="paywall-title">Daily Limit Reached</h3>
+            <p class="paywall-subtitle">You've used all <strong>5 free questions</strong> for today.</p>
+            <div class="paywall-timer">
+                <span>🕐 Resets at midnight · </span>
+                <span id="paywall-countdown">calculating…</span>
+            </div>
+            <div class="paywall-actions">
+                <button id="paywall-share-btn" class="btn-primary paywall-share">
+                    📲 Share Crop Bot
+                </button>
+                <p class="paywall-share-hint">Help other farmers and spread the word!</p>
+            </div>
+            <button id="close-paywall" class="btn-secondary" style="margin-top:12px">Close</button>
+        </div>
+    </div>
+
+    <!-- PWA Install Banner -->
+    <div id="pwa-banner" class="pwa-banner hidden">
+        <span class="pwa-banner-icon">📱</span>
+        <span class="pwa-banner-text">Install Crop Bot on your phone for offline use</span>
+        <button id="pwa-install-btn" class="pwa-install-btn">Install</button>
+        <button id="pwa-dismiss-btn" class="pwa-dismiss-btn">✕</button>
     </div>
 
     <!-- Toast Notification -->

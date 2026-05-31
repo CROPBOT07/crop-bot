@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#2d5016"/>
+  <rect x="32" y="32" width="448" height="448" rx="72" fill="#4a7c2a"/>
+  <!-- Wheat stalk -->
+  <line x1="256" y1="380" x2="256" y2="140" stroke="#f4e04d" stroke-width="14" stroke-linecap="round"/>
+  <!-- Wheat grains left -->
+  <ellipse cx="220" cy="200" rx="28" ry="14" fill="#f4e04d" transform="rotate(-30 220 200)"/>
+  <ellipse cx="210" cy="240" rx="28" ry="14" fill="#f4e04d" transform="rotate(-25 210 240)"/>
+  <ellipse cx="215" cy="280" rx="28" ry="14" fill="#f4e04d" transform="rotate(-20 215 280)"/>
+  <!-- Wheat grains right -->
+  <ellipse cx="292" cy="200" rx="28" ry="14" fill="#f4e04d" transform="rotate(30 292 200)"/>
+  <ellipse cx="302" cy="240" rx="28" ry="14" fill="#f4e04d" transform="rotate(25 302 240)"/>
+  <ellipse cx="297" cy="280" rx="28" ry="14" fill="#f4e04d" transform="rotate(20 297 280)"/>
+  <!-- Top grain -->
+  <ellipse cx="256" cy="158" rx="18" ry="28" fill="#f4e04d"/>
+  <!-- Ground line -->
+  <rect x="180" y="375" width="152" height="16" rx="8" fill="#8b5e3c"/>
+  <!-- Leaves -->
+  <path d="M256 320 Q200 290 190 250" stroke="#6abf40" stroke-width="10" fill="none" stroke-linecap="round"/>
+  <path d="M256 310 Q312 280 320 240" stroke="#6abf40" stroke-width="10" fill="none" stroke-linecap="round"/>
+</svg>

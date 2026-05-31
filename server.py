@@ -3,6 +3,9 @@ from flask_cors import CORS
 import requests
 import os
 import json
+import time
+import logging
+from datetime import date
 from typing import Any, Dict, List, Optional, Tuple
 from dotenv import load_dotenv
 
@@ -21,6 +24,30 @@ load_dotenv()
 app = Flask(__name__, static_folder='.')
 CORS(app)
 
+FREE_DAILY_LIMIT = 5
+_query_counts: Dict[str, Dict[str, Any]] = {}
+
+
+def _get_client_ip() -> str:
+    xff = request.headers.get('X-Forwarded-For', '')
+    return xff.split(',')[0].strip() if xff else (request.remote_addr or 'unknown')
+
+
+def _check_rate_limit(ip: str) -> Tuple[bool, int]:
+    """Returns (allowed, queries_remaining_after_this_one)."""
+    today = str(date.today())
+    entry = _query_counts.get(ip)
+    if entry is None or entry['date'] != today:
+        _query_counts[ip] = {'date': today, 'count': 1}
+        return True, FREE_DAILY_LIMIT - 1
+    if entry['count'] >= FREE_DAILY_LIMIT:
+        return False, 0
+    entry['count'] += 1
+    return True, FREE_DAILY_LIMIT - entry['count']
+
+logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(levelname)s: %(message)s')
+logger = logging.getLogger(__name__)
+
 # Curated knowledge datasets (JSON). Run: python train_datasets.py
 FARMING_DATASETS = load_all_datasets()
 if FARMING_DATASETS:
@@ -29,6 +56,45 @@ else:
     print(f"[datasets] No datasets in {DATASETS_DIR} - answers use the base assistant prompt only")
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
+
+
+def ttl_cache(seconds: int):
+    cache: Dict[Tuple, Tuple[float, Any]] = {}
+
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            key = (args, tuple(sorted(kwargs.items())))
+            now = time.time()
+            if key in cache:
+                ts, value = cache[key]
+                if now - ts < seconds:
+                    return value
+            result = func(*args, **kwargs)
+            cache[key] = (now, result)
+            return result
+
+        return wrapper
+
+    return decorator
+
+
+@ttl_cache(10 * 60)  # 10 minutes caching
+def fetch_weather_cached(lat: float, lon: float):
+    return fetch_weather(lat, lon)
+
+
+@ttl_cache(10 * 60)
+def get_insights_data(lat: Optional[float], lon: Optional[float], crop: str, district: str):
+    weather_alerts = []
+    if lat is not None and lon is not None:
+        raw = fetch_weather_cached(lat, lon)
+        if raw:
+            weather_alerts = build_alerts(raw)
+    return {
+        'weather_alerts': weather_alerts,
+        'proactive_tips': [],
+        'market_snapshot': SAMPLE_MARKET_DATA,
+    }
 
 
 def _load_json(name: str) -> Dict[str, Any]:
@@ -198,8 +264,11 @@ def _scheme_and_market_snippets(question: str) -> str:
 
 
 # AI Provider Configurations
-AI_PROVIDERS = [
-    {
+# Supports fallback across multiple providers for reliability.
+AI_PROVIDERS: List[Dict[str, Any]] = []
+
+if os.getenv('DEEPSEEK_API_KEY'):
+    AI_PROVIDERS.append({
         'name': 'DeepSeek',
         'api_url': 'https://api.deepseek.com/v1/chat/completions',
         'api_key': os.getenv('DEEPSEEK_API_KEY', ''),
@@ -208,8 +277,48 @@ AI_PROVIDERS = [
             'Authorization': f'Bearer {key}',
             'Content-Type': 'application/json'
         }
-    }
-]
+    })
+
+if os.getenv('OPENAI_API_KEY'):
+    AI_PROVIDERS.append({
+        'name': 'OpenAI',
+        'api_url': 'https://api.openai.com/v1/chat/completions',
+        'api_key': os.getenv('OPENAI_API_KEY', ''),
+        'model': os.getenv('OPENAI_MODEL', 'gpt-3.5-turbo'),
+        'headers': lambda key: {
+            'Authorization': f'Bearer {key}',
+            'Content-Type': 'application/json'
+        }
+    })
+
+if os.getenv('GROQ_API_KEY'):
+    AI_PROVIDERS.append({
+        'name': 'GROQ',
+        'api_url': 'https://api.groq.com/v1/chat/completions',
+        'api_key': os.getenv('GROQ_API_KEY', ''),
+        'model': os.getenv('GROQ_MODEL', 'groq-1.1-mini'),
+        'headers': lambda key: {
+            'Authorization': f'Bearer {key}',
+            'Content-Type': 'application/json'
+        }
+    })
+
+if os.getenv('ANTHROPIC_API_KEY'):
+    AI_PROVIDERS.append({
+        'name': 'Anthropic',
+        'api_url': 'https://api.anthropic.com/v1/complete',
+        'api_key': os.getenv('ANTHROPIC_API_KEY', ''),
+        'model': os.getenv('ANTHROPIC_MODEL', 'claude-3.5-mini'),
+        'headers': lambda key: {
+            'x-api-key': key,
+            'Content-Type': 'application/json'
+        },
+        'custom_format': True
+    })
+
+if not AI_PROVIDERS:
+    logger.warning('No AI providers are configured. Add DEEPSEEK_API_KEY, OPENAI_API_KEY, GROQ_API_KEY, or ANTHROPIC_API_KEY to .env')
+
 
 def call_deepseek_openai_groq(provider: Dict, question: str, system_prompt: str) -> Tuple[bool, str]:
     """Call DeepSeek, OpenAI, or Groq API (they use same format)"""
@@ -388,12 +497,12 @@ def get_ai_response(
     for provider in AI_PROVIDERS:
         # Skip if no API key provided
         if not provider['api_key']:
-            print(f"⚠️  Skipping {provider['name']} - No API key provided")
+            logger.warning('Skipping %s - No API key provided', provider['name'])
             failed_providers.append(f"{provider['name']} (no API key)")
             continue
-        
-        print(f"🔄 Trying {provider['name']}...")
-        
+
+        logger.info('Trying provider %s', provider['name'])
+
         # Call appropriate API based on provider
         if provider.get('custom_format'):
             success, result = call_anthropic(provider, question, system_prompt)
@@ -401,14 +510,13 @@ def get_ai_response(
             success, result = call_deepseek_openai_groq(provider, question, system_prompt)
         
         if success:
-            print(f"✅ Success with {provider['name']}!")
+            logger.info('Success with provider %s', provider['name'])
             if failed_providers:
-                print(f"   (Previous attempts failed: {', '.join(failed_providers)})")
+                logger.warning('Previous attempts failed: %s', ', '.join(failed_providers))
             return result, provider['name'], ''
         else:
-            print(f"❌ {provider['name']} failed: {result}")
+            logger.warning('Provider %s failed: %s', provider['name'], result)
             failed_providers.append(f"{provider['name']} ({result})")
-            print(f"   Continuing to next provider...")
             continue
     
     # All providers failed
@@ -418,18 +526,36 @@ def get_ai_response(
     error_msg += 'Please check your API keys in the .env file and ensure at least one has available credits.'
     return None, None, error_msg
 
+@app.errorhandler(Exception)
+def handle_exception(e):
+    logger.error('Unhandled exception: %s', str(e), exc_info=True)
+    return jsonify({'error': 'Internal server error'}), 500
+
+
 @app.route('/ask', methods=['POST'])
 def ask_question():
     try:
         data = request.json or {}
-        question = data.get('question', '')
+        question = (data.get('question') or '').strip()
+        if not question:
+            return jsonify({'error': 'No question provided'}), 400
+        if len(question) > 1200:
+            return jsonify({'error': 'Question is too long (max 1200 characters)'}), 400
+
+        ip = _get_client_ip()
+        allowed, remaining = _check_rate_limit(ip)
+        if not allowed:
+            return jsonify({
+                'error': 'quota_exceeded',
+                'message': f'You have used all {FREE_DAILY_LIMIT} free questions for today. Come back tomorrow for more free questions!',
+                'limit': FREE_DAILY_LIMIT,
+            }), 429
+
+        logger.info('Received /ask request. question=%s', (question[:120] + '...') if len(question) > 120 else question)
         raw_dataset = data.get('dataset', 'all')
         eff_dataset = (raw_dataset or 'all').strip().lower()
         if eff_dataset not in FARMING_DATASETS and eff_dataset != 'all':
             eff_dataset = 'all'
-
-        if not question:
-            return jsonify({'error': 'No question provided'}), 400
 
         weather_summary: Optional[str] = None
         lat, lon = data.get('lat'), data.get('lon')
@@ -469,13 +595,16 @@ def ask_question():
         )
 
         if answer:
+            logger.info('Answer provided by %s (dataset=%s)', provider, eff_dataset)
             return jsonify({
                 'answer': answer,
                 'provider': provider,
                 'dataset': eff_dataset if FARMING_DATASETS else None,
                 'image_analyzed': bool(image_analysis),
+                'queries_remaining': remaining,
             })
         else:
+            logger.error('AI response failure: %s', error)
             return jsonify({'error': error}), 500
 
     except Exception as e:
@@ -488,7 +617,7 @@ def weather_endpoint():
     lon = request.args.get('lon', type=float)
     if lat is None or lon is None:
         return jsonify({'error': 'Provide lat and lon query parameters'}), 400
-    raw = fetch_weather(lat, lon)
+    raw = fetch_weather_cached(lat, lon)
     if not raw:
         return jsonify({'error': 'Weather data unavailable'}), 502
     daily = raw.get('daily') or {}
@@ -511,12 +640,9 @@ def insights_endpoint():
     crop = (request.args.get('crop') or '').strip().lower()
     district = (request.args.get('district') or '').strip()
 
-    # Weather alerts
-    weather_alerts: List[str] = []
-    if lat is not None and lon is not None:
-        raw = fetch_weather(lat, lon)
-        if raw:
-            weather_alerts = build_alerts(raw)
+    # Cached insights (including weather alerts)
+    insights = get_insights_data(lat, lon, crop, district)
+    weather_alerts = insights.get('weather_alerts', [])
 
     # Proactive tips based on crop
     crop_tips_map = {
@@ -565,7 +691,37 @@ def health():
         'configured_providers': configured_providers,
         'total_providers': len(AI_PROVIDERS),
         'openai_vision': bool(os.getenv('OPENAI_API_KEY', '').strip()),
+        'datasets_loaded': len(FARMING_DATASETS),
     })
+
+
+@app.route('/feedback', methods=['POST'])
+def feedback():
+    payload = request.json or {}
+    question = (payload.get('question') or '').strip()
+    answer = (payload.get('answer') or '').strip()
+    feedback_text = (payload.get('feedback') or '').strip()
+
+    if not feedback_text:
+        return jsonify({'error': 'Feedback text is required'}), 400
+
+    entry = {
+        'timestamp': payload.get('timestamp') or time.strftime('%Y-%m-%dT%H:%M:%S'),
+        'question': question,
+        'answer': answer,
+        'feedback': feedback_text,
+        'source': request.remote_addr,
+    }
+
+    try:
+        feedback_file = os.path.join(DATA_DIR, 'feedback.jsonl')
+        with open(feedback_file, 'a', encoding='utf-8') as f:
+            f.write(json.dumps(entry, ensure_ascii=False) + '\n')
+        return jsonify({'status': 'ok'}), 201
+    except Exception as e:
+        logger.error('Error saving feedback: %s', str(e), exc_info=True)
+        return jsonify({'error': 'Could not save feedback'}), 500
+
 
 @app.route('/datasets', methods=['GET'])
 def get_datasets():
@@ -589,6 +745,44 @@ def get_providers():
             'model': provider['model']
         })
     return jsonify({'providers': providers_info})
+
+@app.route('/crop-calendar', methods=['GET'])
+def crop_calendar():
+    crop = (request.args.get('crop') or '').strip()
+    district = (request.args.get('district') or '').strip()
+    if not crop:
+        return jsonify({'error': 'Provide crop parameter'}), 400
+
+    location_hint = f" in {district}" if district else " in India"
+    question = f"12-month farming calendar for {crop}{location_hint}"
+    system_prompt = (
+        "You are an expert Indian agricultural scientist. "
+        "Generate a practical 12-month crop calendar as a JSON array (no markdown, just raw JSON). "
+        "Each element: {\"month\": \"January\", \"season\": \"Rabi\", "
+        "\"activities\": [\"...\", \"...\"], \"watch\": \"...\", \"tip\": \"...\"}. "
+        "Include all 12 months. Return ONLY the JSON array."
+    )
+
+    for provider in AI_PROVIDERS:
+        if not provider['api_key']:
+            continue
+        if provider.get('custom_format'):
+            success, result = call_anthropic(provider, question, system_prompt)
+        else:
+            success, result = call_deepseek_openai_groq(provider, question, system_prompt)
+        if success:
+            result = result.strip()
+            # Strip markdown code fences if present
+            if result.startswith('```'):
+                result = result.split('\n', 1)[-1].rsplit('```', 1)[0].strip()
+            try:
+                calendar_data = json.loads(result)
+                return jsonify({'calendar': calendar_data, 'crop': crop, 'district': district})
+            except json.JSONDecodeError:
+                return jsonify({'calendar_text': result, 'crop': crop, 'district': district})
+
+    return jsonify({'error': 'Calendar generation failed — no AI provider available'}), 500
+
 
 @app.route('/')
 def index():

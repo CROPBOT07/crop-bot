@@ -1,0 +1,36 @@
+{
+  "name": "Crop Bot — AI Farming Assistant",
+  "short_name": "Crop Bot",
+  "description": "AI-powered farming assistant for Indian farmers by Ayushmaan Singh Pundir",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a2e1a",
+  "theme_color": "#4a7c2a",
+  "orientation": "portrait-primary",
+  "categories": ["agriculture", "education", "productivity"],
+  "lang": "en-IN",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Ask a Farming Question",
+      "short_name": "Ask",
+      "description": "Jump straight to the question screen",
+      "url": "/?shortcut=ask",
+      "icons": [{ "src": "/icon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Crop Calendar",
+      "short_name": "Calendar",
+      "description": "View your crop farming calendar",
+      "url": "/?shortcut=calendar",
+      "icons": [{ "src": "/icon.svg", "sizes": "any" }]
+    }
+  ]
+}

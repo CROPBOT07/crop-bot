@@ -25,14 +25,30 @@ const copyBtn = document.getElementById('copy-btn');
 const historyBtn = document.getElementById('history-btn');
 const historyModal = document.getElementById('history-modal');
 const historyList = document.getElementById('history-list');
+const historyFilterInput = document.getElementById('history-filter-input');
 const closeModal = document.getElementById('close-modal');
 const clearHistory = document.getElementById('clear-history');
+const historyClearFilter = document.getElementById('history-clear-filter');
+const datasetSelect = document.getElementById('dataset-select');
+const providerStatus = document.getElementById('provider-status');
+const feedbackInput = document.getElementById('feedback-input');
+const feedbackSubmit = document.getElementById('feedback-submit');
 const quickBtns = document.querySelectorAll('.quick-btn');
 const toast = document.getElementById('toast');
 const toastMessage = document.getElementById('toast-message');
 
 const btnLocation = document.getElementById('btn-location');
+const btnLocationSidebar = document.getElementById('btn-location-sidebar');
+const btnCamera = document.getElementById('btn-camera');
+const btnCameraSidebar = document.getElementById('btn-camera-sidebar');
 const btnProfile = document.getElementById('btn-profile');
+const homeBtn = document.getElementById('home-btn');
+const btnProfileSidebar = document.getElementById('btn-profile-sidebar');
+const btnDashboard = document.getElementById('btn-dashboard');
+const btnDashboardSidebar = document.getElementById('btn-dashboard-sidebar');
+const aboutBtn = document.getElementById('about-btn');
+const aboutBtnSidebar = document.getElementById('about-btn-sidebar');
+const newChatBtn = document.getElementById('new-chat');
 const langSelect = document.getElementById('lang-select');
 const weatherPanel = document.getElementById('weather-panel');
 const weatherLine = document.getElementById('weather-line');
@@ -47,15 +63,12 @@ const clearImageBtn = document.getElementById('clear-image');
 const photoPreviewCard = document.getElementById('photo-preview-card');
 const photoOptions = document.getElementById('photo-options');
 const btnGallery = document.getElementById('btn-gallery');
-const btnCamera = document.getElementById('btn-camera');
 
 const aboutModal = document.getElementById('about-modal');
-const aboutBtn = document.getElementById('about-btn');
 const closeAbout = document.getElementById('close-about');
 const dashboardModal = document.getElementById('dashboard-modal');
 const closeDashboard = document.getElementById('close-dashboard');
 const refreshDashboard = document.getElementById('refresh-dashboard');
-const btnDashboard = document.getElementById('btn-dashboard');
 const dashAlerts = document.getElementById('dash-alerts');
 const dashTips = document.getElementById('dash-tips');
 const dashMarket = document.getElementById('dash-market');
@@ -82,6 +95,27 @@ let pendingImageMime = 'image/jpeg';
 
 const LS_PROFILE = 'farmProfileV1';
 const LS_LANG = 'langPreferenceV1';
+
+const developerAnswer = `Ayushmaan Singh Pundir is an aspiring developer with a growing interest in technology and software development. He is currently building foundational skills in programming, problem-solving, and logical thinking, and is enthusiastic about learning modern development tools and practices. Ayushmaan demonstrates curiosity, discipline, and a willingness to explore new concepts, which are essential qualities for a successful developer.
+
+He is focused on strengthening his understanding of core subjects such as programming fundamentals, mathematics, and computational thinking. With continued guidance and hands-on practice, Ayushmaan is expected to develop strong technical capabilities and contribute effectively to future software development projects.`;
+
+function isDeveloperQuery(text) {
+    if (!text) return false;
+    const q = text.toLowerCase();
+    return [
+        'who is your developer',
+        'who developed you',
+        'who built you',
+        'who made you',
+        'developer',
+        'created you',
+        'developed by',
+        'ayushmaan',
+        'deepseek',
+        'deepmind'
+    ].some((kw) => q.includes(kw));
+}
 
 // ==================== Music Controls ====================
 let audioReady = false;
@@ -277,11 +311,65 @@ if (refreshDashboard) {
     });
 }
 
+// Sidebar quick action mapping
+if (btnLocationSidebar && btnLocation) {
+    btnLocationSidebar.addEventListener('click', () => btnLocation.click());
+}
+if (btnCameraSidebar && btnCamera) {
+    btnCameraSidebar.addEventListener('click', () => btnCamera.click());
+}
+if (btnProfileSidebar && btnProfile) {
+    btnProfileSidebar.addEventListener('click', () => btnProfile.click());
+}
+if (btnDashboardSidebar && btnDashboard) {
+    btnDashboardSidebar.addEventListener('click', () => btnDashboard.click());
+}
+if (aboutBtnSidebar && aboutBtn) {
+    aboutBtnSidebar.addEventListener('click', () => aboutBtn.click());
+}
+if (homeBtn) {
+    homeBtn.addEventListener('click', () => {
+        welcomePage.classList.add('active');
+        questionPage.classList.remove('active');
+        document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+        homeBtn.classList.add('active');
+    });
+}
+
+if (newChatBtn) {
+    newChatBtn.addEventListener('click', () => {
+        questionInput.value = '';
+        answerContainer.classList.add('hidden');
+        clearPhoto();
+        if (voiceAssistantMode) setVoiceAssistantMode(false);
+        document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+        newChatBtn.classList.add('active');
+    });
+}
+
+const modePills = document.querySelectorAll('.mode-pill');
+modePills.forEach((pill) => {
+    pill.addEventListener('click', () => {
+        modePills.forEach((p) => p.classList.remove('active'));
+        pill.classList.add('active');
+        const mode = pill.dataset.mode;
+        if (mode === 'market') {
+            showToast('📈 Market mode selected (context switch)');
+        } else if (mode === 'diagnosis') {
+            showToast('🔬 Diagnosis mode selected (use camera for crop health)');
+        } else {
+            showToast('🌱 Farming mode selected');
+        }
+    });
+});
+
 // ==================== Page Navigation ====================
 startBtn.addEventListener('click', () => {
     welcomePage.classList.remove('active');
     questionPage.classList.add('active');
     questionInput.focus();
+    document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+    if (newChatBtn) newChatBtn.classList.add('active');
 });
 
 backBtn.addEventListener('click', () => {
@@ -553,12 +641,20 @@ function saveToHistory(question, answer) {
 }
 
 function renderHistory() {
-    if (questionHistory.length === 0) {
-        historyList.innerHTML = '<p class="empty-history">No questions asked yet. Start exploring!</p>';
+    const filter = historyFilterInput?.value.trim().toLowerCase() || '';
+    const filteredHistory = filter
+        ? questionHistory.filter((entry) =>
+              entry.question.toLowerCase().includes(filter) ||
+              (entry.answer && entry.answer.toLowerCase().includes(filter))
+          )
+        : questionHistory;
+
+    if (filteredHistory.length === 0) {
+        historyList.innerHTML = '<p class="empty-history">No matching history entries. Try a different filter.</p>';
         return;
     }
-    
-    historyList.innerHTML = questionHistory.map((entry, index) => {
+
+    historyList.innerHTML = filteredHistory.map((entry, index) => {
         const date = new Date(entry.timestamp);
         const timeStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         return `
@@ -568,12 +664,12 @@ function renderHistory() {
             </div>
         `;
     }).join('');
-    
+
     // Add click handlers
     document.querySelectorAll('.history-item').forEach(item => {
         item.addEventListener('click', () => {
             const index = parseInt(item.dataset.index);
-            const entry = questionHistory[index];
+            const entry = filteredHistory[index];
             questionInput.value = entry.question;
             historyModal.classList.add('hidden');
             submitBtn.click();
@@ -582,9 +678,26 @@ function renderHistory() {
 }
 
 historyBtn.addEventListener('click', () => {
+    if (historyFilterInput) {
+        historyFilterInput.value = '';
+    }
     renderHistory();
     historyModal.classList.remove('hidden');
 });
+
+if (historyFilterInput) {
+    historyFilterInput.addEventListener('input', () => {
+        renderHistory();
+    });
+}
+
+if (historyClearFilter) {
+    historyClearFilter.addEventListener('click', () => {
+        historyFilterInput.value = '';
+        renderHistory();
+        historyFilterInput.focus();
+    });
+}
 
 closeModal.addEventListener('click', () => {
     historyModal.classList.add('hidden');
@@ -611,6 +724,65 @@ function showToast(message, duration = 3000) {
     setTimeout(() => {
         toast.classList.remove('show');
     }, duration);
+}
+
+async function refreshProviderStatus() {
+    if (!providerStatus) return;
+    providerStatus.textContent = 'Provider status: checking…';
+    try {
+        const r = await fetch(`${apiOrigin()}/health`);
+        const data = await r.json();
+        const providers = (data.configured_providers || []).join(', ') || 'none';
+        providerStatus.textContent = `Provider status: ${data.status || 'unknown'}; configured: ${providers}; total: ${data.total_providers || 0}`;
+        providerStatus.classList.toggle('status-error', data.status !== 'ok');
+    } catch (e) {
+        providerStatus.textContent = 'Provider status: unavailable';
+        providerStatus.classList.add('status-error');
+    }
+}
+
+async function loadDatasets() {
+    if (!datasetSelect) return;
+    try {
+        const r = await fetch(`${apiOrigin()}/datasets`);
+        const data = await r.json();
+        const datasets = data.datasets || [];
+        datasetSelect.innerHTML = '<option value="all">All datasets (default)</option>' +
+            datasets
+                .filter((d) => d.id && d.id !== 'all')
+                .map((d) => `<option value="${d.id}">${d.name || d.id}</option>`)
+                .join('');
+    } catch (e) {
+        console.warn('Could not fetch datasets:', e);
+    }
+}
+
+async function submitFeedback(question, answer) {
+    if (!feedbackInput || !feedbackSubmit) return;
+    const text = feedbackInput.value.trim();
+    if (!text) {
+        showToast('✍️ Enter feedback before sending');
+        return;
+    }
+    feedbackSubmit.disabled = true;
+    try {
+        const r = await fetch(`${apiOrigin()}/feedback`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question, answer, feedback: text, timestamp: new Date().toISOString() }),
+        });
+        if (r.ok) {
+            showToast('🙏 Feedback received. Thank you!');
+            feedbackInput.value = '';
+        } else {
+            showToast('⚠️ Could not send feedback');
+        }
+    } catch (e) {
+        showToast('⚠️ Feedback service unavailable');
+        console.error('Feedback error', e);
+    } finally {
+        feedbackSubmit.disabled = false;
+    }
 }
 
 // ==================== Farm profile & weather ====================
@@ -772,6 +944,16 @@ submitBtn.addEventListener('click', async () => {
         questionInput.focus();
         return;
     }
+
+    if (isDeveloperQuery(question)) {
+        answerText.textContent = developerAnswer;
+        providerBadge.textContent = 'Powered by Crop Bot (local override)';
+        answerContainer.classList.remove('hidden');
+        showToast('✅ Developer info provided locally');
+        saveToHistory(question, developerAnswer);
+        if (voiceAssistantMode) speak(developerAnswer);
+        return;
+    }
     
     // Show loading, hide answer
     loading.classList.remove('hidden');
@@ -783,7 +965,7 @@ submitBtn.addEventListener('click', async () => {
         const apiUrl = `${apiOrigin()}/ask`;
         const payload = {
             question: question,
-            dataset: 'all',
+            dataset: datasetSelect && datasetSelect.value ? datasetSelect.value : 'all',
             farm_profile: collectFarmProfileFromForm(),
             language: langSelect ? langSelect.value : 'en-IN',
         };
@@ -806,10 +988,19 @@ submitBtn.addEventListener('click', async () => {
         
         const data = await response.json();
         
+        if (response.status === 429 && data.error === 'quota_exceeded') {
+            loading.classList.add('hidden');
+            submitBtn.disabled = false;
+            updateQuotaBar(0);
+            showPaywall();
+            return;
+        }
+
         if (data.error) {
             answerText.innerHTML = `<span style="color: #ef4444;">❌ Error: ${data.error}</span>`;
             providerBadge.textContent = '';
         } else {
+            if (data.queries_remaining != null) updateQuotaBar(data.queries_remaining);
             answerText.textContent = data.answer;
             let badge = data.provider ? `Powered by ${data.provider}` : '';
             if (data.image_analyzed) {
@@ -842,6 +1033,13 @@ submitBtn.addEventListener('click', async () => {
     }
 });
 
+if (feedbackSubmit) {
+    feedbackSubmit.addEventListener('click', () => {
+        const last = questionHistory[0] || { question: '', answer: '' };
+        submitFeedback(last.question, last.answer);
+    });
+}
+
 // ==================== Keyboard Shortcuts ====================
 questionInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -857,16 +1055,202 @@ document.addEventListener('keydown', (e) => {
         if (profileModal) profileModal.classList.add('hidden');
         if (dashboardModal) dashboardModal.classList.add('hidden');
         if (aboutModal) aboutModal.classList.add('hidden');
+        if (calendarModal) calendarModal.classList.add('hidden');
+        if (paywallModal) paywallModal.classList.add('hidden');
         stopSpeaking();
     }
+});// ==================== Service Worker (PWA) ====================
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch((e) => console.warn('SW registration failed:', e));
+}
+
+// ==================== PWA Install Prompt ====================
+let _deferredInstallPrompt = null;
+const pwaBanner = document.getElementById('pwa-banner');
+const pwaInstallBtn = document.getElementById('pwa-install-btn');
+const pwaDismissBtn = document.getElementById('pwa-dismiss-btn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    _deferredInstallPrompt = e;
+    // Only show banner if user hasn't dismissed it before
+    if (!localStorage.getItem('pwaBannerDismissed')) {
+        setTimeout(() => pwaBanner && pwaBanner.classList.remove('hidden'), 4000);
+    }
 });
+
+if (pwaInstallBtn) {
+    pwaInstallBtn.addEventListener('click', async () => {
+        if (!_deferredInstallPrompt) return;
+        _deferredInstallPrompt.prompt();
+        const { outcome } = await _deferredInstallPrompt.userChoice;
+        _deferredInstallPrompt = null;
+        pwaBanner.classList.add('hidden');
+        if (outcome === 'accepted') showToast('📱 Crop Bot installed! Find it on your home screen.');
+    });
+}
+
+if (pwaDismissBtn) {
+    pwaDismissBtn.addEventListener('click', () => {
+        pwaBanner.classList.add('hidden');
+        localStorage.setItem('pwaBannerDismissed', '1');
+    });
+}
+
+window.addEventListener('appinstalled', () => {
+    pwaBanner.classList.add('hidden');
+    showToast('📱 Crop Bot installed successfully!');
+});
+
+// Handle PWA shortcuts (start_url shortcuts)
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('shortcut') === 'ask') {
+    startBtn && startBtn.click();
+} else if (urlParams.get('shortcut') === 'calendar') {
+    startBtn && startBtn.click();
+    setTimeout(() => document.getElementById('btn-calendar-sidebar') && document.getElementById('btn-calendar-sidebar').click(), 300);
+}
+
+// ==================== Quota Bar ====================
+const quotaBar = document.getElementById('quota-bar');
+const quotaText = document.getElementById('quota-text');
+
+function updateQuotaBar(remaining) {
+    if (!quotaBar || remaining == null) return;
+    quotaBar.classList.remove('hidden', 'quota-low', 'quota-empty');
+    if (remaining === 0) {
+        quotaBar.classList.add('quota-empty');
+        quotaText.textContent = 'No free questions left today — resets at midnight';
+    } else if (remaining <= 2) {
+        quotaBar.classList.add('quota-low');
+        quotaText.textContent = `⚠️ Only ${remaining} free question${remaining === 1 ? '' : 's'} left today`;
+    } else {
+        quotaText.textContent = `${remaining} free question${remaining === 1 ? '' : 's'} remaining today`;
+    }
+}
+
+// ==================== Paywall Modal ====================
+const paywallModal = document.getElementById('paywall-modal');
+const closePaywall = document.getElementById('close-paywall');
+const paywallShareBtn = document.getElementById('paywall-share-btn');
+const paywallCountdown = document.getElementById('paywall-countdown');
+
+function showPaywall() {
+    if (!paywallModal) return;
+    paywallModal.classList.remove('hidden');
+    updatePaywallCountdown();
+}
+
+function updatePaywallCountdown() {
+    if (!paywallCountdown) return;
+    const now = new Date();
+    const midnight = new Date(now);
+    midnight.setHours(24, 0, 0, 0);
+    const diff = midnight - now;
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    paywallCountdown.textContent = `${h}h ${m}m until reset`;
+}
+
+if (closePaywall) closePaywall.addEventListener('click', () => paywallModal.classList.add('hidden'));
+if (paywallModal) paywallModal.addEventListener('click', (e) => { if (e.target === paywallModal) paywallModal.classList.add('hidden'); });
+
+if (paywallShareBtn) {
+    paywallShareBtn.addEventListener('click', async () => {
+        const shareData = {
+            title: 'Crop Bot — Free AI Farming Assistant',
+            text: 'Get free farming advice, weather alerts, and crop disease diagnosis in your language! Built by a 12-year-old student from India.',
+            url: 'https://crop-bot.onrender.com/',
+        };
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+                showToast('🙏 Thank you for sharing!');
+            } else {
+                await navigator.clipboard.writeText(shareData.url);
+                showToast('🔗 Link copied! Share it with fellow farmers.');
+            }
+        } catch (e) { /* user cancelled */ }
+    });
+}
+
+// ==================== Crop Calendar ====================
+const calendarModal = document.getElementById('calendar-modal');
+const closeCalendar = document.getElementById('close-calendar');
+const calendarBody = document.getElementById('calendar-body');
+const calendarCropInfo = document.getElementById('calendar-crop-info');
+const calGenerateBtn = document.getElementById('cal-generate-btn');
+const calCropInput = document.getElementById('cal-crop-input');
+const calDistrictInput = document.getElementById('cal-district-input');
+const btnCalendarSidebar = document.getElementById('btn-calendar-sidebar');
+
+function openCalendarModal() {
+    if (!calendarModal) return;
+    calendarModal.classList.remove('hidden');
+    // Pre-fill from farm profile
+    const profile = JSON.parse(localStorage.getItem(LS_PROFILE) || '{}');
+    if (calCropInput && profile.crop && !calCropInput.value) calCropInput.value = profile.crop;
+    if (calDistrictInput && profile.district && !calDistrictInput.value) calDistrictInput.value = profile.district;
+}
+
+if (btnCalendarSidebar) btnCalendarSidebar.addEventListener('click', openCalendarModal);
+if (closeCalendar) closeCalendar.addEventListener('click', () => calendarModal.classList.add('hidden'));
+if (calendarModal) calendarModal.addEventListener('click', (e) => { if (e.target === calendarModal) calendarModal.classList.add('hidden'); });
+
+function renderCalendarGrid(data) {
+    const months = Array.isArray(data) ? data : null;
+    if (!months) return null;
+    return `<div class="calendar-grid">${months.map((m) => `
+        <div class="cal-month-card">
+            <div class="cal-month-name">📅 ${m.month || ''}</div>
+            ${m.season ? `<span class="cal-season-badge">${m.season}</span>` : ''}
+            <ul class="cal-activities">${(m.activities || []).map((a) => `<li>${a}</li>`).join('')}</ul>
+            ${m.watch ? `<div class="cal-watch">⚠️ ${m.watch}</div>` : ''}
+            ${m.tip ? `<div class="cal-tip">💡 ${m.tip}</div>` : ''}
+        </div>`).join('')}</div>`;
+}
+
+async function generateCalendar() {
+    if (!calCropInput || !calendarBody) return;
+    const crop = calCropInput.value.trim();
+    const district = calDistrictInput ? calDistrictInput.value.trim() : '';
+    if (!crop) { showToast('Enter a crop name first'); calCropInput.focus(); return; }
+
+    calendarBody.innerHTML = '<div class="cal-loading">🌱 Generating your calendar… this may take 15–20 seconds</div>';
+    if (calendarCropInfo) calendarCropInfo.textContent = `Crop: ${crop}${district ? ' · ' + district : ''}`;
+    if (calGenerateBtn) calGenerateBtn.disabled = true;
+
+    try {
+        const url = `${apiOrigin()}/crop-calendar?crop=${encodeURIComponent(crop)}${district ? '&district=' + encodeURIComponent(district) : ''}`;
+        const r = await fetch(url);
+        const d = await r.json();
+        if (d.error) {
+            calendarBody.innerHTML = `<p style="color:var(--danger);padding:16px">❌ ${d.error}</p>`;
+        } else if (d.calendar) {
+            const grid = renderCalendarGrid(d.calendar);
+            calendarBody.innerHTML = grid || `<div class="calendar-text-fallback">${d.calendar}</div>`;
+        } else if (d.calendar_text) {
+            calendarBody.innerHTML = `<div class="calendar-text-fallback">${d.calendar_text}</div>`;
+        }
+    } catch (e) {
+        calendarBody.innerHTML = '<p style="color:var(--danger);padding:16px">❌ Could not connect to server.</p>';
+    } finally {
+        if (calGenerateBtn) calGenerateBtn.disabled = false;
+    }
+}
+
+if (calGenerateBtn) calGenerateBtn.addEventListener('click', generateCalendar);
+if (calCropInput) calCropInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') generateCalendar(); });
 
 // ==================== Initialize ====================
 const savedLang = localStorage.getItem(LS_LANG);
 if (savedLang && langSelect) langSelect.value = savedLang;
 loadFarmProfileIntoForm();
+loadDatasets();
+refreshProviderStatus();
 initVoiceRecognition();
 renderHistory();
 // Pre-load voices so they are ready for first TTS call
 if (synthesis) synthesis.getVoices();
 console.log('🌾 Crop Bot initialized successfully!');
+// no duplicate submit handler here; main one above has developer fallback logic.

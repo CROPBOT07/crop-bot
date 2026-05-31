@@ -1696,6 +1696,18 @@ textarea:focus {
     }
 }
 
+/* ── Share button ─────────────────────────────────────────── */
+.sidebar-share-btn {
+    background: linear-gradient(135deg, #25d366, #128c7e) !important;
+    color: white !important;
+    font-weight: 600 !important;
+    border: none !important;
+}
+.sidebar-share-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
 /* ── Quota bar ─────────────────────────────────────────────── */
 .quota-bar {
     margin-top: 8px;

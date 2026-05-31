@@ -1193,6 +1193,25 @@ function openCalendarModal() {
     if (calDistrictInput && profile.district && !calDistrictInput.value) calDistrictInput.value = profile.district;
 }
 
+const shareBtnSidebar = document.getElementById('share-btn-sidebar');
+if (shareBtnSidebar) {
+    shareBtnSidebar.addEventListener('click', async () => {
+        const shareData = {
+            title: 'Crop Bot — Free AI Farming Assistant',
+            text: '🌾 Get free farming advice, crop disease diagnosis, weather alerts & more in 55+ languages! Built by a 12-year-old student from India.',
+            url: 'https://crop-bot.onrender.com/',
+        };
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                await navigator.clipboard.writeText(shareData.url);
+                showToast('🔗 Link copied! Share it with farmers on WhatsApp.');
+            }
+        } catch (e) { /* user cancelled */ }
+    });
+}
+
 if (btnCalendarSidebar) btnCalendarSidebar.addEventListener('click', openCalendarModal);
 if (closeCalendar) closeCalendar.addEventListener('click', () => calendarModal.classList.add('hidden'));
 if (calendarModal) calendarModal.addEventListener('click', (e) => { if (e.target === calendarModal) calendarModal.classList.add('hidden'); });

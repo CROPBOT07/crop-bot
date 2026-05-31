@@ -799,7 +799,7 @@ def robots():
 @app.route('/<path:filename>')
 def serve_static(filename):
     """Serve static files (CSS, JS) - only allow specific file types"""
-    allowed_extensions = ['.html', '.css', '.js', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.mp3', '.wav', '.ogg']
+    allowed_extensions = ['.html', '.css', '.js', '.json', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.mp3', '.wav', '.ogg']
     if any(filename.endswith(ext) for ext in allowed_extensions):
         return send_from_directory('.', filename)
     else:

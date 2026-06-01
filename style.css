@@ -1696,6 +1696,79 @@ textarea:focus {
     }
 }
 
+/* ── Install button ───────────────────────────────────────── */
+.sidebar-install-btn {
+    background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
+    color: white !important;
+    font-weight: 600 !important;
+    border: none !important;
+}
+.sidebar-install-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+.install-modal-content { max-width: 420px; }
+.install-subtitle {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+}
+.install-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+.install-tab {
+    flex: 1;
+    padding: 8px;
+    border: 2px solid #cde0b5;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    transition: all 0.2s;
+}
+.install-tab.active {
+    border-color: var(--primary-light);
+    background: #f0f7e8;
+    color: var(--primary);
+    font-weight: 600;
+}
+.install-steps { display: flex; flex-direction: column; gap: 10px; }
+.install-steps.hidden { display: none; }
+.install-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 12px;
+    background: #f8fbf5;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    color: var(--text-dark);
+}
+.install-step-num {
+    min-width: 24px;
+    height: 24px;
+    background: var(--primary-light);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.8rem;
+}
+.install-result {
+    padding: 10px 14px;
+    background: #d4edda;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    color: #1a5c2a;
+    font-weight: 500;
+    text-align: center;
+}
+
 /* ── Share button ─────────────────────────────────────────── */
 .sidebar-share-btn {
     background: linear-gradient(135deg, #25d366, #128c7e) !important;

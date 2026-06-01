@@ -178,6 +178,7 @@
                     <button id="btn-profile-sidebar" class="sidebar-btn">👤 Farm Profile</button>
                     <button id="btn-dashboard-sidebar" class="sidebar-btn">📊 Dashboard</button>
                     <button id="btn-calendar-sidebar" class="sidebar-btn">📅 Crop Calendar</button>
+                    <button id="install-btn-sidebar" class="sidebar-btn sidebar-install-btn">📥 Install App</button>
                     <button id="share-btn-sidebar" class="sidebar-btn sidebar-share-btn">📲 Share Crop Bot</button>
                     <button id="about-btn-sidebar" class="sidebar-btn">ℹ️ About</button>
 
@@ -663,6 +664,70 @@
         <span class="pwa-banner-text">Install Crop Bot on your phone for offline use</span>
         <button id="pwa-install-btn" class="pwa-install-btn">Install</button>
         <button id="pwa-dismiss-btn" class="pwa-dismiss-btn">✕</button>
+    </div>
+
+    <!-- Install Guide Modal -->
+    <div id="install-modal" class="modal hidden">
+        <div class="modal-content install-modal-content">
+            <div class="modal-header">
+                <h3>📲 Install Crop Bot</h3>
+                <button id="close-install" class="close-btn">×</button>
+            </div>
+            <p class="install-subtitle">Add Crop Bot to your home screen like a real app — free, no Play Store needed!</p>
+
+            <div class="install-tabs">
+                <button class="install-tab active" data-tab="android">🤖 Android</button>
+                <button class="install-tab" data-tab="iphone">🍎 iPhone</button>
+            </div>
+
+            <div id="install-android" class="install-steps">
+                <div class="install-step">
+                    <span class="install-step-num">1</span>
+                    <span>Open <strong>http://13.61.11.239:5000/</strong> in <strong>Chrome</strong></span>
+                </div>
+                <div class="install-step">
+                    <span class="install-step-num">2</span>
+                    <span>Tap the <strong>⋮ three dots</strong> menu at the top right</span>
+                </div>
+                <div class="install-step">
+                    <span class="install-step-num">3</span>
+                    <span>Tap <strong>"Add to Home screen"</strong></span>
+                </div>
+                <div class="install-step">
+                    <span class="install-step-num">4</span>
+                    <span>Tap <strong>"Add"</strong> — done! 🎉</span>
+                </div>
+                <div class="install-result">
+                    🌾 Crop Bot icon will appear on your home screen just like a real app!
+                </div>
+            </div>
+
+            <div id="install-iphone" class="install-steps hidden">
+                <div class="install-step">
+                    <span class="install-step-num">1</span>
+                    <span>Open <strong>http://13.61.11.239:5000/</strong> in <strong>Safari</strong></span>
+                </div>
+                <div class="install-step">
+                    <span class="install-step-num">2</span>
+                    <span>Tap the <strong>Share button</strong> (box with arrow at bottom)</span>
+                </div>
+                <div class="install-step">
+                    <span class="install-step-num">3</span>
+                    <span>Scroll down and tap <strong>"Add to Home Screen"</strong></span>
+                </div>
+                <div class="install-step">
+                    <span class="install-step-num">4</span>
+                    <span>Tap <strong>"Add"</strong> — done! 🎉</span>
+                </div>
+                <div class="install-result">
+                    🌾 Crop Bot icon will appear on your home screen just like a real app!
+                </div>
+            </div>
+
+            <button id="copy-install-link" class="btn-primary" style="width:100%;margin-top:16px">
+                📋 Copy Link to Share
+            </button>
+        </div>
     </div>
 
     <!-- Toast Notification -->

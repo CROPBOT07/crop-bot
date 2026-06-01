@@ -1193,6 +1193,38 @@ function openCalendarModal() {
     if (calDistrictInput && profile.district && !calDistrictInput.value) calDistrictInput.value = profile.district;
 }
 
+// ==================== Install Guide ====================
+const installModal = document.getElementById('install-modal');
+const closeInstall = document.getElementById('close-install');
+const installBtnSidebar = document.getElementById('install-btn-sidebar');
+const copyInstallLink = document.getElementById('copy-install-link');
+const installTabs = document.querySelectorAll('.install-tab');
+
+if (installBtnSidebar) installBtnSidebar.addEventListener('click', () => installModal && installModal.classList.remove('hidden'));
+if (closeInstall) closeInstall.addEventListener('click', () => installModal.classList.add('hidden'));
+if (installModal) installModal.addEventListener('click', (e) => { if (e.target === installModal) installModal.classList.add('hidden'); });
+
+installTabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+        installTabs.forEach((t) => t.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('install-android').classList.add('hidden');
+        document.getElementById('install-iphone').classList.add('hidden');
+        document.getElementById(`install-${tab.dataset.tab}`).classList.remove('hidden');
+    });
+});
+
+if (copyInstallLink) {
+    copyInstallLink.addEventListener('click', async () => {
+        try {
+            await navigator.clipboard.writeText('http://13.61.11.239:5000/');
+            showToast('🔗 Link copied! Send it on WhatsApp.');
+        } catch (e) {
+            showToast('Link: http://13.61.11.239:5000/');
+        }
+    });
+}
+
 const shareBtnSidebar = document.getElementById('share-btn-sidebar');
 if (shareBtnSidebar) {
     shareBtnSidebar.addEventListener('click', async () => {

@@ -96,6 +96,16 @@ let pendingImageMime = 'image/jpeg';
 const LS_PROFILE = 'farmProfileV1';
 const LS_LANG = 'langPreferenceV1';
 
+// Session ID for conversation memory — persists per browser tab
+function _getSessionId() {
+    let sid = sessionStorage.getItem('cropbot_session');
+    if (!sid) {
+        sid = 'sess_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+        sessionStorage.setItem('cropbot_session', sid);
+    }
+    return sid;
+}
+
 const developerAnswer = `Ayushmaan Singh Pundir is an aspiring developer with a growing interest in technology and software development. He is currently building foundational skills in programming, problem-solving, and logical thinking, and is enthusiastic about learning modern development tools and practices. Ayushmaan demonstrates curiosity, discipline, and a willingness to explore new concepts, which are essential qualities for a successful developer.
 
 He is focused on strengthening his understanding of core subjects such as programming fundamentals, mathematics, and computational thinking. With continued guidance and hands-on practice, Ayushmaan is expected to develop strong technical capabilities and contribute effectively to future software development projects.`;
@@ -968,6 +978,7 @@ submitBtn.addEventListener('click', async () => {
             dataset: datasetSelect && datasetSelect.value ? datasetSelect.value : 'all',
             farm_profile: collectFarmProfileFromForm(),
             language: langSelect ? langSelect.value : 'en-IN',
+            session_id: _getSessionId(),
         };
         if (farmLat != null && farmLon != null) {
             payload.lat = farmLat;

@@ -10,8 +10,15 @@ DATASETS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dataset
 
 # Max characters injected into the system prompt (keep room for the answer)
 MAX_CONTEXT_CHARS = 3500
-TOP_CHUNKS = 5
+TOP_CHUNKS = 7  # increased from 5 for better coverage
 MIN_WORD_LEN = 2
+
+# Common words that add noise — skip boosting these
+_STOPWORDS = {
+    'the', 'is', 'in', 'it', 'of', 'to', 'and', 'a', 'an', 'for',
+    'on', 'at', 'by', 'be', 'as', 'or', 'do', 'my', 'me', 'we',
+    'how', 'what', 'when', 'why', 'can', 'i', 'you', 'are', 'was',
+}
 
 
 def _tokenize(text: str) -> set:
@@ -19,12 +26,36 @@ def _tokenize(text: str) -> set:
     return {w for w in words if len(w) >= MIN_WORD_LEN}
 
 
+def _bigrams(tokens: set) -> set:
+    lst = sorted(tokens)
+    return {f"{lst[i]}_{lst[i+1]}" for i in range(len(lst) - 1)}
+
+
 def _chunk_score(question_tokens: set, keywords: List[str], text: str) -> float:
+    # Remove stopwords from question tokens for keyword matching
+    q_content = {t for t in question_tokens if t not in _STOPWORDS}
+
     kw_tokens = _tokenize(" ".join(keywords)) if keywords else set()
     text_tokens = _tokenize(text)
-    overlap_q_kw = len(question_tokens & kw_tokens)
-    overlap_q_text = len(question_tokens & text_tokens)
-    return overlap_q_kw * 3.0 + overlap_q_text * 1.0 + (0.5 if overlap_q_kw else 0.0)
+
+    overlap_q_kw = len(q_content & kw_tokens)
+    overlap_q_text = len(q_content & text_tokens)
+
+    # Bigram bonus — phrase-level matching scores higher
+    q_bigrams = _bigrams(q_content)
+    text_bigrams = _bigrams(text_tokens)
+    bigram_bonus = len(q_bigrams & text_bigrams) * 2.0
+
+    # Keyword density bonus — reward chunks where matched keywords are a large fraction
+    kw_density = (overlap_q_kw / max(len(kw_tokens), 1)) * 1.5
+
+    return (
+        overlap_q_kw * 3.0
+        + overlap_q_text * 1.0
+        + bigram_bonus
+        + kw_density
+        + (0.5 if overlap_q_kw else 0.0)
+    )
 
 
 def load_dataset_file(path: str) -> Optional[Dict[str, Any]]:

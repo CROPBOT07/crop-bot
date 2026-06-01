@@ -4,8 +4,10 @@ import requests
 import os
 import json
 import time
+import hashlib
 import logging
 from datetime import date
+from collections import defaultdict
 from typing import Any, Dict, List, Optional, Tuple
 from dotenv import load_dotenv
 
@@ -44,6 +46,78 @@ def _check_rate_limit(ip: str) -> Tuple[bool, int]:
         return False, 0
     entry['count'] += 1
     return True, FREE_DAILY_LIMIT - entry['count']
+
+
+# ── 1. Conversation Memory ────────────────────────────────────
+# session_id -> list of {role, content} (max last 6 messages = 3 exchanges)
+_sessions: Dict[str, List[Dict[str, str]]] = defaultdict(list)
+MAX_HISTORY = 6  # 3 user + 3 assistant turns
+
+def _get_session_history(session_id: str) -> List[Dict[str, str]]:
+    return _sessions.get(session_id, [])
+
+def _save_to_session(session_id: str, question: str, answer: str) -> None:
+    if not session_id:
+        return
+    history = _sessions[session_id]
+    history.append({'role': 'user', 'content': question})
+    history.append({'role': 'assistant', 'content': answer})
+    # Keep only last MAX_HISTORY messages
+    if len(history) > MAX_HISTORY:
+        _sessions[session_id] = history[-MAX_HISTORY:]
+
+
+# ── 2. Response Cache ─────────────────────────────────────────
+# hash -> (timestamp, answer, provider)
+_response_cache: Dict[str, Tuple[float, str, str]] = {}
+CACHE_TTL = 3600  # 1 hour
+
+def _cache_key(question: str, farm_profile: str, dataset: str, lang: str) -> str:
+    raw = f"{question.lower().strip()}|{farm_profile}|{dataset}|{lang}"
+    return hashlib.md5(raw.encode()).hexdigest()
+
+def _get_cached(key: str) -> Optional[Tuple[str, str]]:
+    entry = _response_cache.get(key)
+    if entry and (time.time() - entry[0]) < CACHE_TTL:
+        return entry[1], entry[2]  # answer, provider
+    return None
+
+def _set_cache(key: str, answer: str, provider: str) -> None:
+    _response_cache[key] = (time.time(), answer, provider)
+    # Evict old entries if cache grows too large
+    if len(_response_cache) > 1000:
+        cutoff = time.time() - CACHE_TTL
+        stale = [k for k, v in _response_cache.items() if v[0] < cutoff]
+        for k in stale:
+            del _response_cache[k]
+
+
+# ── 3. Circuit Breaker ────────────────────────────────────────
+# provider_name -> {failures: int, last_failure: float, open_until: float}
+_circuit: Dict[str, Dict[str, float]] = {}
+CB_FAILURE_THRESHOLD = 3
+CB_OPEN_SECONDS = 300  # skip provider for 5 minutes after 3 failures
+
+def _circuit_allow(name: str) -> bool:
+    state = _circuit.get(name)
+    if not state:
+        return True
+    if time.time() < state.get('open_until', 0):
+        logger.info('Circuit breaker OPEN for %s — skipping', name)
+        return False
+    return True
+
+def _circuit_success(name: str) -> None:
+    if name in _circuit:
+        del _circuit[name]
+
+def _circuit_failure(name: str) -> None:
+    state = _circuit.setdefault(name, {'failures': 0, 'open_until': 0})
+    state['failures'] = state.get('failures', 0) + 1
+    state['last_failure'] = time.time()
+    if state['failures'] >= CB_FAILURE_THRESHOLD:
+        state['open_until'] = time.time() + CB_OPEN_SECONDS
+        logger.warning('Circuit breaker OPENED for %s for %ds', name, CB_OPEN_SECONDS)
 
 logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
@@ -320,16 +394,17 @@ if not AI_PROVIDERS:
     logger.warning('No AI providers are configured. Add DEEPSEEK_API_KEY, OPENAI_API_KEY, GROQ_API_KEY, or ANTHROPIC_API_KEY to .env')
 
 
-def call_deepseek_openai_groq(provider: Dict, question: str, system_prompt: str) -> Tuple[bool, str]:
+def call_deepseek_openai_groq(provider: Dict, question: str, system_prompt: str, history: Optional[List[Dict]] = None) -> Tuple[bool, str]:
     """Call DeepSeek, OpenAI, or Groq API (they use same format)"""
     try:
         headers = provider['headers'](provider['api_key'])
+        messages = [{'role': 'system', 'content': system_prompt}]
+        if history:
+            messages.extend(history[:-1])  # add prior turns, exclude last user msg
+        messages.append({'role': 'user', 'content': question})
         payload = {
             'model': provider['model'],
-            'messages': [
-                {'role': 'system', 'content': system_prompt},
-                {'role': 'user', 'content': question}
-            ],
+            'messages': messages,
             'temperature': 0.7,
             'max_tokens': 1000
         }
@@ -447,6 +522,7 @@ def get_ai_response(
     language_instruction: str = "",
     schemes_market_text: str = "",
     image_analysis: Optional[str] = None,
+    history: Optional[List[Dict]] = None,
 ) -> Tuple[Optional[str], Optional[str], str]:
     """
     Try multiple AI providers in order until one succeeds.
@@ -493,30 +569,36 @@ def get_ai_response(
     system_prompt = "\n\n".join(blocks)
     
     failed_providers = []
-    
+
     for provider in AI_PROVIDERS:
+        name = provider['name']
+
         # Skip if no API key provided
         if not provider['api_key']:
-            logger.warning('Skipping %s - No API key provided', provider['name'])
-            failed_providers.append(f"{provider['name']} (no API key)")
+            failed_providers.append(f"{name} (no API key)")
             continue
 
-        logger.info('Trying provider %s', provider['name'])
+        # Circuit breaker — skip recently failed providers
+        if not _circuit_allow(name):
+            failed_providers.append(f"{name} (circuit open)")
+            continue
+
+        logger.info('Trying provider %s', name)
 
         # Call appropriate API based on provider
         if provider.get('custom_format'):
             success, result = call_anthropic(provider, question, system_prompt)
         else:
-            success, result = call_deepseek_openai_groq(provider, question, system_prompt)
-        
+            success, result = call_deepseek_openai_groq(provider, question, system_prompt, history=history)
+
         if success:
-            logger.info('Success with provider %s', provider['name'])
-            if failed_providers:
-                logger.warning('Previous attempts failed: %s', ', '.join(failed_providers))
-            return result, provider['name'], ''
+            _circuit_success(name)
+            logger.info('Success with provider %s', name)
+            return result, name, ''
         else:
-            logger.warning('Provider %s failed: %s', provider['name'], result)
-            failed_providers.append(f"{provider['name']} ({result})")
+            _circuit_failure(name)
+            logger.warning('Provider %s failed: %s', name, result)
+            failed_providers.append(f"{name} ({result})")
             continue
     
     # All providers failed
@@ -571,18 +653,40 @@ def ask_question():
         lang = data.get('language') or data.get('lang')
         language_instruction = _language_instruction(lang if isinstance(lang, str) else None)
         schemes_market_text = _scheme_and_market_snippets(question)
+        session_id = (data.get('session_id') or '').strip()
 
         image_analysis: Optional[str] = None
         img_b64 = data.get('image_base64')
         img_mime = data.get('image_mime') or 'image/jpeg'
-        if isinstance(img_b64, str) and img_b64.strip():
+        has_image = isinstance(img_b64, str) and img_b64.strip()
+        if has_image:
             image_analysis = analyze_crop_image(img_b64.strip(), str(img_mime))
             if not image_analysis:
                 image_analysis = (
                     "User attached a crop photo, but image analysis is unavailable "
                     "(set OPENAI_API_KEY on the server for automatic photo review). "
-                    "Ask them to describe leaf/soil symptoms in words."
+                    "Ask them to describe leaf/stem/leaf symptoms in words."
                 )
+
+        # Check response cache (skip if image attached — images are unique)
+        cache_key = _cache_key(question, farm_profile_text, eff_dataset, lang or 'en')
+        cached = None if has_image else _get_cached(cache_key)
+        if cached:
+            cached_answer, cached_provider = cached
+            logger.info('Cache hit for question (provider was %s)', cached_provider)
+            if session_id:
+                _save_to_session(session_id, question, cached_answer)
+            return jsonify({
+                'answer': cached_answer,
+                'provider': cached_provider + ' (cached)',
+                'dataset': eff_dataset if FARMING_DATASETS else None,
+                'image_analyzed': False,
+                'queries_remaining': remaining,
+                'from_cache': True,
+            })
+
+        # Get conversation history for this session
+        history = _get_session_history(session_id) if session_id else None
 
         answer, provider, error = get_ai_response(
             question,
@@ -592,10 +696,15 @@ def ask_question():
             language_instruction=language_instruction,
             schemes_market_text=schemes_market_text,
             image_analysis=image_analysis,
+            history=history,
         )
 
         if answer:
             logger.info('Answer provided by %s (dataset=%s)', provider, eff_dataset)
+            if not has_image:
+                _set_cache(cache_key, answer, provider)
+            if session_id:
+                _save_to_session(session_id, question, answer)
             return jsonify({
                 'answer': answer,
                 'provider': provider,

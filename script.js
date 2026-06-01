@@ -1160,7 +1160,7 @@ if (paywallShareBtn) {
         const shareData = {
             title: 'Crop Bot — Free AI Farming Assistant',
             text: 'Get free farming advice, weather alerts, and crop disease diagnosis in your language! Built by a 12-year-old student from India.',
-            url: 'https://crop-bot.onrender.com/',
+            url: 'http://13.61.11.239:5000/',
         };
         try {
             if (navigator.share) {
@@ -1199,7 +1199,7 @@ if (shareBtnSidebar) {
         const shareData = {
             title: 'Crop Bot — Free AI Farming Assistant',
             text: '🌾 Get free farming advice, crop disease diagnosis, weather alerts & more in 55+ languages! Built by a 12-year-old student from India.',
-            url: 'https://crop-bot.onrender.com/',
+            url: 'http://13.61.11.239:5000/',
         };
         try {
             if (navigator.share) {
